@@ -112,4 +112,12 @@ public class KListIterator<T> implements Iterator<T>
 		_pNode = _pNode.next();
 		return previous.getData();
 	}
+	
+	@Override
+	public void remove()
+	{
+		if( _pList== null || _pNode == null)
+			return;
+		_pList.remove(this);
+	}
 }

@@ -1,23 +1,26 @@
 package it.konga.framework.flusso;
 
 
-import java.util.ArrayList;
+import it.konga.framework.datastruct.KLinkedList;
 
-import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+
+import com.opensymphony.xwork2.ActionContext;
 
 /**
  * Oggetto che si occupa di gestire la sessione. Offre vari metodi di utility
  * @author Giampaolo Saporito
  */
-@SuppressWarnings("unchecked")
+
 public class KSessionManager
 {
-	private static String nomeListaChiavi = "listaChiaviSessione";
-	private HttpSession session;
+	private ActionContext context;
 	
-	public KSessionManager(HttpSession session)
+	public KSessionManager( ActionContext context )
 	{
-		this.session = session;
+		this.context = context;
 	}
 	
 	/**
@@ -25,18 +28,9 @@ public class KSessionManager
 	 * @param key chiave da assegnare all'oggetto
 	 * @param obj oggetto da mettere in sessione
 	 */
-	public void setAttribute(String key, Object obj)
+	public void putAttribute(String key, Object obj)
 	{
-		ArrayList<String> elementiInSessione = (ArrayList<String>) session.getAttribute(nomeListaChiavi);
-		if(elementiInSessione == null)
-		{
-			elementiInSessione = new ArrayList<String>();
-			elementiInSessione.add(key);
-		}
-		else if(!elementiInSessione.contains(key))
-			elementiInSessione.add(key);
-		session.setAttribute(nomeListaChiavi, elementiInSessione);
-		session.setAttribute(key, obj);
+		context.getSession().put(key, obj);
 	}
 	
 	/**
@@ -46,10 +40,7 @@ public class KSessionManager
 	 */
 	public boolean isAttributeInSession(String key)
 	{
-		ArrayList<String> elementiInSessione = (ArrayList<String>) session.getAttribute(nomeListaChiavi);
-		if(elementiInSessione == null)
-			return false;
-		return elementiInSessione.contains(key);
+		return context.getSession().containsKey(key);
 	}
 	
 	/**
@@ -57,11 +48,8 @@ public class KSessionManager
 	 */
 	public ArrayList<String> getSessionAttributesKeys()
 	{
-		ArrayList<String> elementiInSessione =  (ArrayList<String>) session.getAttribute(nomeListaChiavi);
-		if(elementiInSessione == null)
-			return new ArrayList<String>();
-		else
-			return elementiInSessione;
+		ArrayList<String> ret = new ArrayList<String>( context.getSession().keySet() );
+		return ret;
 	}
 	
 	/**
@@ -69,13 +57,7 @@ public class KSessionManager
 	 */
 	public void cleanSession()
 	{
-		ArrayList<String> elementiInSessione =  (ArrayList<String>) session.getAttribute(nomeListaChiavi);
-		if (elementiInSessione == null || elementiInSessione.size() <= 0)
-			return;
-		for (String key : elementiInSessione)
-		{
-			session.setAttribute(key, null);
-		}
+		context.getSession().clear();
 	}
 	
 	/**
@@ -84,22 +66,29 @@ public class KSessionManager
 	 */
 	public void cleanSession(String... exceptions)
 	{
-		ArrayList<String> elementiInSessione =  (ArrayList<String>) session.getAttribute(nomeListaChiavi);
-		if (elementiInSessione == null || elementiInSessione.size() <= 0)
+		Map<String, Object> session = context.getSession();
+		if(session == null || session.isEmpty() )
 			return;
-		boolean deleteKey = true;
-		for (String key : elementiInSessione)
+		Iterator<String> itr = session.keySet().iterator();	
+
+		KLinkedList<String> daLasciare = new KLinkedList<String>( exceptions  );
+		
+		while( itr.hasNext() )
 		{
-			for(String exception : exceptions)
+			boolean delete = true;
+			String check = itr.next();
+			Iterator<String> listItr = daLasciare.iterator();
+			while(listItr.hasNext())
 			{
-				if(exception.equals(key))
+				if( check.equals(listItr.next()) )
 				{
-					deleteKey = false;
+					delete = false;
+					listItr.remove();
 					break;
 				}
 			}
-			if(deleteKey)
-				session.setAttribute(key, null);
+			if(delete)
+				itr.remove();
 		}
 	}
 }//EO SessionManager

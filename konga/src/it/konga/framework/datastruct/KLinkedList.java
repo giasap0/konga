@@ -131,6 +131,13 @@ public class KLinkedList<T> implements Serializable, Iterable<T>
 		}
 		append( other._tail._data);
 	}
+	
+	public KLinkedList(T[] array)
+	{
+		for (T t : array) {
+			this.append(t);
+		}
+	}
 
 	public boolean isEmpty()						
 	{

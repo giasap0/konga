@@ -2,6 +2,6 @@
 messo qui solo come reminder su come si scrive questo file.
 Va messo in tomcat/config
 <?xml version="1.0" encoding="UTF-8"?>
-<Context docBase="D:\konga\web_app" path="/konga">
+<Context docBase="D:\git\konga\web_app" path="/konga">
 </Context>
 -->

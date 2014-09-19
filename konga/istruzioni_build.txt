@@ -1,0 +1,9 @@
+1) creare un jar del progetto konga e metterlo in konga-libs / generated_jar
+2) copiare questo jar anche in web_app / WEB-INF/ lib
+
+
+------------------------------------------------------------------------------------------
+3) SE si aggiungono nuove librerie, referenze, vanno inserite in konga-libs
+4) aggiungerle al buld path di konga
+5) aggiornare la libreria di web_app (konga-framework-1.0) puntando le nuove referenced
+6) copiare i jar anche in WEB-INF/lib affinchè siano disponibili per il web container a runtime

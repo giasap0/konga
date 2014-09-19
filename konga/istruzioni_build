@@ -1,0 +1,3 @@
+per far si che le librerie del framework vengano importate correttamente in tomcat
+1) Esportare konga come jar nel progetto konga-libs, nella cartella generated_jar (lo metto qui solo per una questione di ordine)
+2) Copiare questo jar nella web application in WEB-INF/libs

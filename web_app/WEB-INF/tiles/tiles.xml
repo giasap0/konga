@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+   "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+   "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+
+<tiles-definitions>
+
+	<definition name="baseLayout" template="/WEB-INF/jsp/layout/base_template.jsp">
+		<put-attribute name="inclusions" value="/WEB-INF/jsp/layout/inclusions.jsp" />
+		<put-attribute name="navigation" value="/WEB-INF/jsp/layout/navigation.jsp" />
+		<put-attribute name="header" value="/WEB-INF/jsp/layout/header.jsp" />
+		<put-attribute name="body" value="" />
+		<put-attribute name="banner" value="/WEB-INF/jsp/layout/banner.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/jsp/layout/footer.jsp" />
+	</definition>
+
+	<definition name="konga.tiles.login" extends="baseLayout">
+		<put-attribute name="body" value="/WEB-INF/jsp/login.jsp"></put-attribute>
+	</definition>
+	
+	<definition name="konga.tiles.home" extends="baseLayout">
+		<put-attribute name="body" value="/WEB-INF/jsp/home.jsp"></put-attribute>
+	</definition>
+	
+	<definition name="konga.tiles.error" extends="baseLayout">
+		<put-attribute name="body" value="/WEB-INF/jsp/error.jsp"></put-attribute>
+	</definition>
+	
+	<definition name="konga.tiles.forbidden" extends="baseLayout">
+		<put-attribute name="body" value="Non autorizzato"></put-attribute>
+	</definition>
+
+</tiles-definitions>

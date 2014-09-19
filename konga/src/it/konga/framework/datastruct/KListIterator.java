@@ -80,7 +80,7 @@ public class KListIterator<T> implements Iterator<T>
 	/**
 	 * valore del nodo puntato
 	 */
-	public T getData()					{return _pNode.getData();}
+	public T getData()					{if(_pNode== null) return null; return _pNode.getData();}
 	public boolean isValid()			{return _pNode != null;}
 	public void gotoBegin()				{if(_pList != null) _pNode= _pList._head;}
 	public void gotoEnd()				{if(_pList != null) _pNode = _pList._tail;}
@@ -95,18 +95,21 @@ public class KListIterator<T> implements Iterator<T>
 	{
 		if(_pNode == null)
 			return false;
-		return _pNode.next() != null;
+		return true;
 	}
 
+	/**
+	 * return current data and move to next
+	 */
 	@Override
 	public T next()
 	{
 		if( !hasNext() )
 		{
-			_pNode= null;
 			return null;
 		}
+		KLinkedList<T>.ZListNode previous = _pNode;
 		_pNode = _pNode.next();
-		return _pNode.getData();
+		return previous.getData();
 	}
 }

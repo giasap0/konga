@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Iterator;
 
 /**
  * lista semplicemente linkata. Usare ZListIterator per iterarla.
@@ -143,7 +142,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>
 	public KListIterator<T> begin()				{ return new KListIterator<T>(this,_head); }
 	public KListIterator<T> end()				{ return new KListIterator<T>(this,_tail); }
 	@Override
-	public Iterator<T> iterator()				{ return  begin(); }
+	public KListIterator<T> iterator()			{ return  begin(); }
 	
 	/**
 	 * Fa una deep copy dell'oggetto. Implementato tramite serializzazione

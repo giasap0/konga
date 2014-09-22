@@ -1,6 +1,5 @@
 package it.konga.framework;
 
-
 public class KTest
 {
 

@@ -11,7 +11,7 @@ import java.io.Serializable;
  * lista semplicemente linkata. Usare ZListIterator per iterarla.
  * @author Giampaolo Saporito
  */
-public class KLinkedList<T> implements Serializable, Iterable<T>
+public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 {
 	private static final long serialVersionUID = -4921861046503460358L;
 
@@ -107,9 +107,12 @@ public class KLinkedList<T> implements Serializable, Iterable<T>
 		}
 	};
 	
+	// ----------------------------------------------------------------------------------- fields ----------------------------------------------------------------------------------- \\
 	protected ZListNode _head;
 	protected ZListNode _tail;
 	private int _count;
+	
+	// ----------------------------------------------------------------------------------- costruttori ----------------------------------------------------------------------------------- \\
 	
 	public KLinkedList()
 	{
@@ -138,6 +141,8 @@ public class KLinkedList<T> implements Serializable, Iterable<T>
 			this.append(t);
 		}
 	}
+	
+	// ----------------------------------------------------------------------------------- metodi publici ----------------------------------------------------------------------------------- \\
 
 	public boolean isEmpty()						
 	{
@@ -150,6 +155,22 @@ public class KLinkedList<T> implements Serializable, Iterable<T>
 	public KListIterator<T> end()				{ return new KListIterator<T>(this,_tail); }
 	@Override
 	public KListIterator<T> iterator()			{ return  begin(); }
+	/**
+	 * torna l'iteratore che punta all'eleemento con indice indx. L'indice parte da 0
+	 * @param indx parte da 0
+	 * @return iteratore
+	 */
+	public KListIterator<T> iterator(int indx)  
+	{
+		if(indx<0 || indx >= this.size())
+			throw new IndexOutOfBoundsException("KLinkedList::iterator(int) - index out of bounds. index == "+indx);
+		KListIterator<T> itr = begin();
+		if(indx==0)
+			return itr;
+		for(int i=0; i < indx && itr.hasNext() ; i++)
+			itr.next();
+		return itr;
+	}
 	
 	/**
 	 * Fa una deep copy dell'oggetto. Implementato tramite serializzazione
@@ -192,6 +213,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>
 		}
 		_count++;
 	}
+	
 	/**
 	 * appende riferimenti agli elementi dell'altra lista
 	 * @param other altra lista
@@ -242,7 +264,10 @@ public class KLinkedList<T> implements Serializable, Iterable<T>
 		_count++;
 	}
 	
-	//inserts an item AFTER the current iterator (append if iterator is invalid)
+	/** inserts an item AFTER the current iterator (append if iterator is invalid)
+	 * @param itr iteratore posizione
+	 * @param value valore da inserire
+	 */
 	void insert(  KListIterator<T> itr, T value)
 	{
 		if( ! itr._pList.equals(this) ) 		//non è iteratore di questa lista
@@ -325,6 +350,35 @@ public class KLinkedList<T> implements Serializable, Iterable<T>
 		}
 		_count--;
 	}
+	/**
+	 * rimuove tutti gli elementi con indce incluso nell'intervallo passato in input.<br>
+	 * I limiti sono INCLUSIVI<br>
+	 * Gli indici partono da 0 e non possono assumere lo stesso valore<br>
+	 * ToIndex deve essere > fromIndex
+	 * @param fromIndex primo indice da cancellare. Parte da 0
+	 * @param toIndex ultimo indice da cancellare. Parte da 0
+	 */
+	public void removeRange(int fromIndex, int toIndex) 
+	{
+		if( fromIndex<0 || fromIndex>= this.size() || toIndex>= this.size() || toIndex<= fromIndex)
+		{
+			throw new IndexOutOfBoundsException("KLinkedList::removeRange(int,int) - index out of bounds. size == "+ this._count +" , fromIndex == "+fromIndex+" , toIndex == "+toIndex);
+		}
+		KLinkedList<T>.ZListNode ptrFrom = nodeAtIndex(fromIndex-1);
+		KLinkedList<T>.ZListNode ptrNext = ptrFrom._pNext;
+		for(int i=fromIndex; i <= toIndex; i++)
+		{
+			KLinkedList<T>.ZListNode temp = ptrNext;
+			ptrNext = ptrNext._pNext;
+			temp.clear();
+			--_count;
+		}
+		if(ptrNext.equals(_tail) )
+		{
+			_tail = ptrNext;
+		}
+		ptrFrom._pNext = ptrNext;
+	}
 	public void clear()
 	{
 		ZListNode itr = _head;
@@ -347,7 +401,21 @@ public class KLinkedList<T> implements Serializable, Iterable<T>
 			return;
 		itr._pNode._data = newValue;
 	}
+	
+	
 
+	// ------------------------------------------------------------------------------------------ Private ------------------------------------------------------------------------------------------ \\
+	
+	private KLinkedList<T>.ZListNode nodeAtIndex(int index)
+	{
+		KLinkedList<T>.ZListNode ptr = _head;
+		for(int i=0; i < index; i++)
+		{
+			ptr = ptr._pNext;
+		}
+		return ptr;
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void readObject(java.io.ObjectInputStream stream) throws java.io.IOException, ClassNotFoundException
 	{

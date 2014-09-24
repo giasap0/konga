@@ -11,7 +11,8 @@ import com.opensymphony.xwork2.ActionContext;
 
 /**
  * Oggetto che si occupa di gestire la sessione. Offre vari metodi di utility
- * @author Giampaolo Saporito
+ *  @author Giampaolo Saporito
+ * @Date 05/09/2014
  */
 
 public class KSessionManager

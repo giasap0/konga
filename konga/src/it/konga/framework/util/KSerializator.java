@@ -12,7 +12,8 @@ import java.io.OutputStream;
 
 /**
  * classe helper per serializzare / deserializzare oggetti da file e/o stream
- * @author Giampaolo Saporito
+ *  @author Giampaolo Saporito
+ * @Date 05/09/2014
  */
 public class KSerializator
 {

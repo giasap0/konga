@@ -2,8 +2,6 @@ package it.kongaImplementation.actions;
 
 import it.konga.framework.flusso.KBaseAction;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 import org.apache.struts2.convention.annotation.Action;
@@ -23,14 +21,9 @@ public class ACT_GeneraTxt extends KBaseAction
 	}
 
 	@Override
-	@Action(value="/getpdf")
+	@Action(value="/getExcel")
 	public String execute() throws Exception
 	{
-		
-		ByteArrayOutputStream boas = new ByteArrayOutputStream();
-		for(int i=0; i < 100; i++)
-			boas.write(i);
-		fileInputStream = new ByteArrayInputStream(boas.toByteArray());
 		//in realtà scrivere il file di interesse
 		return "success";
 	}

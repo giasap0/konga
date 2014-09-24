@@ -10,6 +10,7 @@ import java.io.Serializable;
 /**
  * lista semplicemente linkata. Usare ZListIterator per iterarla.
  * @author Giampaolo Saporito
+ * @Date 05/09/2014
  */
 public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 {

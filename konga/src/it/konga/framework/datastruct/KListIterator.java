@@ -2,6 +2,11 @@ package it.konga.framework.datastruct;
 
 import java.util.Iterator;
 
+/**
+ * Iteratore per lista linkata
+ * @author Giampaolo Saporito
+ * @Date 05/09/2014
+ */
 public class KListIterator<T> implements Iterator<T>
 {
 

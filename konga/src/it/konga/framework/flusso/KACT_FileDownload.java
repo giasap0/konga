@@ -1,14 +1,11 @@
-package it.kongaImplementation.actions;
+package it.konga.framework.flusso;
 
-import it.konga.framework.flusso.KBaseAction;
 import it.konga.framework.interfaces.KFileWriter;
-import it.konga.framework.util.excel.KBasic_ExcelWriter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 
@@ -18,19 +15,23 @@ import org.apache.struts2.convention.annotation.Results;
 	        "inputName", "file",  
 	        "contentDisposition", "attachment;filename=${fileName}"} )
 })
-public class ACT_GeneraTxt extends KBaseAction
+public abstract class KACT_FileDownload extends KBaseAction
 {
-	private static final long serialVersionUID = 7943170669760353965L;
+	private static final long serialVersionUID = -174852288845066L;
+	
 	private InputStream file;
 	private String fileName;
 	protected KFileWriter _fileWriter;
+	
+	/**
+	 * ereditare questo metodo e scrivere un body che assegna una classe concreta e valorizzata al campo _fileWriter
+	 */
+	protected abstract void initFileWriter();
 
 	@Override
-	@Action(value="/getTxt")
 	public String execute() throws Exception
 	{   
-		final String[][] matrice = {{"a","b","c"},{"1","2","3"}};
-		_fileWriter = new KBasic_ExcelWriter(matrice);
+		initFileWriter();
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		_fileWriter.writeFile(output);
@@ -54,4 +55,4 @@ public class ACT_GeneraTxt extends KBaseAction
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
-}//EO ACT_GeneraTxt
+}

@@ -5,7 +5,7 @@
 <html>
 <head>
 	<meta charset="ISO-8859-1">
-	<title>Zoloo</title>
+	<title>Konga</title>
 	<!--  inclusioni css e javascript -->
 	<tiles:insertAttribute name="inclusions" ignore="true"/>
 </head>

@@ -7,10 +7,10 @@ import java.io.Serializable;
 /**
  * classe base per i DTO.<br>
  * Utile sia come base gerarchica sia come lookUp per implementare la serializzazione
- * @author Giampaolo
- *
+ * @author Giampaolo Saporito
+ * @date 24-09-2014
  */
-public class KAbstract_Dto implements Serializable, ObjectInputValidation
+public abstract class KAbstract_Dto implements Serializable, ObjectInputValidation
 {
 	private static final long serialVersionUID = 7163853062626L;
 	private Integer id;

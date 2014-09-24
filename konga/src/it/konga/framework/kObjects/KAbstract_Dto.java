@@ -1,4 +1,4 @@
-package it.konga.framework.zObjects;
+package it.konga.framework.kObjects;
 
 import java.io.InvalidObjectException;
 import java.io.ObjectInputValidation;
@@ -12,14 +12,14 @@ import java.io.Serializable;
  */
 public class KAbstract_Dto implements Serializable, ObjectInputValidation
 {
-	private static final long serialVersionUID = 7163816705753062626L;
-	private static Integer id;
+	private static final long serialVersionUID = 7163853062626L;
+	private Integer id;
 
-	public static Integer getId(){
+	public Integer getId(){
 		return id;
 	}
-	public static void setId(Integer id){
-		KAbstract_Dto.id = id;
+	public void setId(Integer id){
+		this.id = id;
 	}
 	
 	private void readObject(java.io.ObjectInputStream stream) throws java.io.IOException, ClassNotFoundException

@@ -6,6 +6,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
+import javax.servlet.http.Cookie;
+
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 
@@ -37,6 +39,12 @@ public abstract class KACT_FileDownload extends KBaseAction
 		_fileWriter.writeFile(output);
 		file = new ByteArrayInputStream(output.toByteArray());
 		output.close();
+		
+		// Salvo il cookie che serve al plugin javascript per dare il messaggio durante il download
+		Cookie fileDownload = new Cookie("fileDownload", "true");
+		fileDownload.setPath("/");
+		servletResponse.addCookie(fileDownload);
+		
         return "success"; 
 	}
 

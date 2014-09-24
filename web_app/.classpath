@@ -3,11 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="config"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/konga">
-		<accessrules>
-			<accessrule kind="accessible" pattern="*"/>
-		</accessrules>
-	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/konga-libs"/>
 	<classpathentry kind="lib" path="/konga-libs/lib/antlr-2.7.2.jar"/>
 	<classpathentry kind="lib" path="/konga-libs/lib/asm-3.3.jar"/>

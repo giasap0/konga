@@ -1,11 +1,11 @@
-package it.kongaImplementation.actions;
+package it.kongaImplementation.actions.esempi;
 
 import org.apache.struts2.convention.annotation.Action;
 
 import it.konga.framework.flusso.KACT_FileDownload;
 import it.konga.framework.util.excel.KBasic_ExcelWriter;
 
-public class ACT_GeneraExcel extends KACT_FileDownload
+public class ACT_EsempioGeneraExcel extends KACT_FileDownload
 {
 
 	private static final long serialVersionUID = -1279456937127645656L;
@@ -17,7 +17,7 @@ public class ACT_GeneraExcel extends KACT_FileDownload
 		_fileWriter = new KBasic_ExcelWriter(matrice);
 	}
 	
-	@Action(value="/getExcel")
+	@Action(value="/getExcel_esempio")
 	public String getExcel() throws Exception
 	{
 		return super.execute();

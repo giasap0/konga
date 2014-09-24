@@ -162,7 +162,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 			//autosize su tutto
 			for(int c = 0 ; c <= numeroColonne ; c++)
 			{
-			    sheet.autoSizeColumn((short) c);
+			    sheet.autoSizeColumn(c);
 			}
 			return _workBook;
 	    }
@@ -185,6 +185,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 			    cell.setCellValue( new HSSFRichTextString(nomiColonne.get(c)));
 			}
 	    }
+	    
 	    protected void creaRighe(HSSFSheet sheet, int numeroTotaleRighe)
 	    {
 			for(int i = 0; i <= numeroTotaleRighe; i++)
@@ -192,6 +193,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 			    sheet.createRow(i);
 			}
 	    }
+	    
 	    /**
 	     * ereditare questo metodo per modificare gli stili utilizzati
 	     */

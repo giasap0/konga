@@ -60,5 +60,6 @@
 	<classpathentry kind="lib" path="/konga-libs/lib/poi-ooxml-3.10.1-20140818.jar"/>
 	<classpathentry kind="lib" path="/konga-libs/lib/poi-ooxml-schemas-3.10.1-20140818.jar"/>
 	<classpathentry kind="lib" path="/konga-libs/lib/poi-scratchpad-3.10.1-20140818.jar"/>
+	<classpathentry kind="lib" path="/konga-libs/generated_jar/konga-framework.jar"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>

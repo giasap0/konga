@@ -6,7 +6,7 @@ import java.util.Locale;
 
 /**
  * 
- *  @author Giampaolo Saporito
+ * @author Giampaolo Saporito
  * @Date 05/09/2014
  *
  */
@@ -44,7 +44,7 @@ public class KFormatter
 			numDouble = Double.parseDouble(numero);
 		} catch (NumberFormatException e) {
 			System.out.println("----------------------------------------------");
-			System.out.println("number format Exception: Formatter.numberFormatter(String numero, in numeroDecimali).\nLA stringa in input non è un numero");
+			System.out.println("number format Exception: KFormatter.numberFormatter(String numero, in numeroDecimali).\nLA stringa in input non è un numero");
 			e.printStackTrace();
 			System.out.println("----------------------------------------------");
 			return null;

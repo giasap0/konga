@@ -53,42 +53,42 @@ public class KConverter_DTO_to_NumericTable<DTO extends KAbstract_Dto > {
     
     private void buildTable() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, NumberFormatException
     {
-	table = new Double[_listaOggetti.size()][];
-	Object ret = null;
-	for(int r = 0; r < _listaOggetti.size(); r++)
-	{
-	    table[r] = new Double[_metodi.length];
-	    for(int c=0; c < _metodi.length; c++)
-	    {
-		ret = _metodi[c].invoke(_listaOggetti.get(r) );
-		if( ret == null )
-		    table[r][c] = 0.0;
-		else if( ret instanceof Double)
-		    table[r][c] = (Double) ret;
-		else if( ret instanceof Number)
-		    table[r][c] = ((Number) ret).doubleValue();
-		else if( ret instanceof String) //prova a fare parse
+		table = new Double[_listaOggetti.size()][];
+		Object ret = null;
+		for(int r = 0; r < _listaOggetti.size(); r++)
 		{
-		    table[r][c] =  Double.parseDouble((String) ret);
+		    table[r] = new Double[_metodi.length];
+		    for(int c=0; c < _metodi.length; c++)
+		    {
+			ret = _metodi[c].invoke(_listaOggetti.get(r) );
+			if( ret == null )
+			    table[r][c] = 0.0;
+			else if( ret instanceof Double)
+			    table[r][c] = (Double) ret;
+			else if( ret instanceof Number)
+			    table[r][c] = ((Number) ret).doubleValue();
+			else if( ret instanceof String) //prova a fare parse
+			{
+			    table[r][c] =  Double.parseDouble((String) ret);
+			}
+		    }
 		}
-	    }
-	}
     }
     
     private void initMethods(List<String> metodiDaInvocare) throws NullPointerException, SecurityException, NoSuchMethodException
     {
-	if(metodiDaInvocare == null || _listaOggetti == null)
-	    throw new NullPointerException();
-	if(metodiDaInvocare.size() <= 0)
-	    throw new InvalidParameterException("la lista dei metodi da invocare è vuota");
-	
-	Class<? extends KAbstract_Dto> classe = _listaOggetti.get(0).getClass();
-	_metodi = new Method[metodiDaInvocare.size()];
-	int i=0;
-	for (String nomeMetodo : metodiDaInvocare)
-	{
-	    _metodi[i++] = classe.getMethod(nomeMetodo);
-	}
+		if(metodiDaInvocare == null || _listaOggetti == null)
+		    throw new NullPointerException();
+		if(metodiDaInvocare.size() <= 0)
+		    throw new InvalidParameterException("la lista dei metodi da invocare è vuota");
+		
+		Class<? extends KAbstract_Dto> classe = _listaOggetti.get(0).getClass();
+		_metodi = new Method[metodiDaInvocare.size()];
+		int i=0;
+		for (String nomeMetodo : metodiDaInvocare)
+		{
+		    _metodi[i++] = classe.getMethod(nomeMetodo);
+		}
     }
 }
 

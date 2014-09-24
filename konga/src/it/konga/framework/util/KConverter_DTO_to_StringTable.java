@@ -61,38 +61,38 @@ public class KConverter_DTO_to_StringTable<DTO extends KAbstract_Dto > {
     
     private void buildTable() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException
     {
-	table = new String[_listaOggetti.size()][];
-	Object ret = null;
-	for(int r = 0; r < _listaOggetti.size(); r++)
-	{
-	    table[r] = new String[_metodi.length];
-	    for(int c=0; c < _metodi.length; c++)
-	    {
-		ret = _metodi[c].invoke(_listaOggetti.get(r) );
-		if(ret == null)
-		    table[r][c]= "";
-		else if( ret instanceof String)
-		    table[r][c] = (String) ret;
-		else
-		    table[r][c] = ret.toString();
-	    }
-	}
+		table = new String[_listaOggetti.size()][];
+		Object ret = null;
+		for(int r = 0; r < _listaOggetti.size(); r++)
+		{
+		    table[r] = new String[_metodi.length];
+		    for(int c=0; c < _metodi.length; c++)
+		    {
+			ret = _metodi[c].invoke(_listaOggetti.get(r) );
+			if(ret == null)
+			    table[r][c]= "";
+			else if( ret instanceof String)
+			    table[r][c] = (String) ret;
+			else
+			    table[r][c] = ret.toString();
+		    }
+		}
     }
     
     private void initMethods(List<String> metodiDaInvocare) throws NullPointerException, SecurityException, NoSuchMethodException
     {
-	if(metodiDaInvocare == null || _listaOggetti == null)
-	    throw new NullPointerException("Converter_Dto_ToStringTable::initMethods() - parametro in input == null");
-	if(metodiDaInvocare.size() <= 0)
-	    throw new InvalidParameterException("Converter_Dto_ToStringTable::initMethods() - la lista dei metodi da invocare è vuota");
-	
-	Class<? extends KAbstract_Dto> classe = _listaOggetti.get(0).getClass();
-	_metodi = new Method[metodiDaInvocare.size()];
-	int i=0;
-	for (String nomeMetodo : metodiDaInvocare)
-	{
-	    _metodi[i++] = classe.getMethod(nomeMetodo);
-	}
+		if(metodiDaInvocare == null || _listaOggetti == null)
+		    throw new NullPointerException("Converter_Dto_ToStringTable::initMethods() - parametro in input == null");
+		if(metodiDaInvocare.size() <= 0)
+		    throw new InvalidParameterException("Converter_Dto_ToStringTable::initMethods() - la lista dei metodi da invocare è vuota");
+		
+		Class<? extends KAbstract_Dto> classe = _listaOggetti.get(0).getClass();
+		_metodi = new Method[metodiDaInvocare.size()];
+		int i=0;
+		for (String nomeMetodo : metodiDaInvocare)
+		{
+		    _metodi[i++] = classe.getMethod(nomeMetodo);
+		}
     }
     
 }//EO Converter_Dto_To_Table

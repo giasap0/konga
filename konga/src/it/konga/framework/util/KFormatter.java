@@ -2,6 +2,8 @@ package it.konga.framework.util;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -12,6 +14,16 @@ import java.util.Locale;
  */
 public class KFormatter
 {
+	
+	/**
+	 * ritorna lo stamp di data ed orario nel formato yyyy-MM-dd HH:mm:ss.SSS
+	 */
+	public static String getCurrentDateTimeStamp() {
+	    SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	    Date now = new Date();
+	    return sdfDate.format(now);
+	}
+	
 	/**
 	 * <p>formatta un double in una stringa, approssimando dopo un certo numero di decimali</p>
 	 * @param numero numero da formattare

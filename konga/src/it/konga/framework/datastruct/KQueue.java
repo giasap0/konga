@@ -1,7 +1,5 @@
 package it.konga.framework.datastruct;
 
-import java.util.Iterator;
-
 /**
  * rappresenta uno stack (FIFO) : puoi accodare un elemento e recuperare il primo inserito<br>
  * First In - First Out
@@ -17,17 +15,28 @@ public class KQueue<T> implements Iterable<T>
 	
 	// ----------------- coda ----------------- \\
 	
+	/**
+	 * metti in fondo alla coda un nuovo item
+	 */
 	public void enqueue(T item)						{_list.append(item);}
-	public void dequeue()							{_list.removeFirst();}
+	/**
+	 * toglie dalla coda il prossimo oggetto e lo restituisce
+	 */
+	public T dequeue()								{T x = _list.first(); _list.removeFirst(); return x;}
 	
 	// ----------------- accesso ----------------- \\
 	
+	/**
+	 * accedi al prossimo oggetto in coda
+	 */
 	public T first()								{return _list.first();}
-	public KListIterator<T> begin()					{return _list.begin();}
 	@Override
-	public Iterator<T> iterator() 					{return _list.iterator();}
+	public KListIterator<T> iterator() 				{return _list.iterator();}
 	
 	public boolean isEmpty()						{return _list.isEmpty();}
+	/**
+	 * numero di elementi in coda
+	 */
 	public int size()								{return _list.size();}
 	
 }//EO KQueue

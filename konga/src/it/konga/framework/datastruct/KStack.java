@@ -13,13 +13,26 @@ public class KStack<T>
 	
 	// ----------------- stack ----------------- \\
 	
+	/**
+	 * inserisci nuovo elemento sulla pila
+	 */
 	public void push(T item)					{_list.append(item);}
-	public void pop()							{_list.removeLast();}
+	/**
+	 * toglie l'elemento dalla pila e lo restituisce
+	 * @return
+	 */
+	public T pop()								{T x = _list.last(); _list.removeLast(); return x;}
 	
 	// ----------------- accesso ----------------- \\
 	
+	/**
+	 * accedi all'elemento in cima alla pila
+	 */
 	public T top()								{return _list.last();}
 	public boolean isEmpty()					{return _list.isEmpty();}
+	/**
+	 * numero di elementi presenti
+	 */
 	public int size()							{return _list.size();}	
 	
 }

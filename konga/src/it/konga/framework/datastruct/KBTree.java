@@ -1,5 +1,7 @@
 package it.konga.framework.datastruct;
 
+import it.konga.framework.datastruct.interfaces.Ptr_Function_KBTree;
+
 /**
  * Binary Tree
  * @author Giampaolo Saporito
@@ -7,316 +9,149 @@ package it.konga.framework.datastruct;
 public class KBTree<T>
 {
 	//TODO implementare
-}
-
-/*
-
-friend class GBTreeIterator<T>;
-	typedef GBTree<T> Node;
-public:
-	GBTree()				: _pParent(nullptr),_pLeftCh(nullptr),_pRightCh(nullptr)				{}
-	GBTree(const T& val)	: _data(val), _pParent(nullptr),_pLeftCh(nullptr),_pRightCh(nullptr)	{}
-	virtual ~GBTree()		{clearChildren();}
-
-	//delete all children from this node
-	inline void clearChildren()
+	
+	//questo è solo syntax sugar
+	private class Node extends KBTree<T>
 	{
-		if( _pLeftCh != nullptr )
+		public Node() {super();}
+		public Node(T val) {super(val);}
+	}
+	// ------------------------------------------------------------------------- fields ------------------------------------------------------------------------- \\
+	protected T _data;
+	protected Node _pParent;
+	protected Node _pLeftCh;
+	protected Node _pRightCh;
+	
+	// ------------------------------------------------------------------------- costruttori ------------------------------------------------------------------------- \\
+	public KBTree() 		{}
+	public KBTree(T val) 	{_data = val;}
+	
+	// ------------------------------------------------------------------------- metodi publici ------------------------------------------------------------------------- \\
+	/**delete all children from this node */
+	public void clearChildren()
+	{
+		if( _pLeftCh != null )
 		{
-			delete _pLeftCh;
-			_pLeftCh = nullptr;
+			_pLeftCh.clearChildren();
+			_pLeftCh = null;
 		}
-		if( _pRightCh != nullptr )
+		if(_pRightCh != null)
 		{
-			delete _pRightCh;
-			_pRightCh = nullptr;
+			_pRightCh.clearChildren();
+			_pRightCh = null;
 		}
 	}
-	//return total number of nodes
-	inline int size()	const
+	
+	/** return total number of nodes */
+	public int size()
 	{
-		int c = 1;
-		if( _pLeftCh!= nullptr)
+		int c=1;
+		if(_pLeftCh != null)
 		{
-			c+= _pLeftCh->size();
+			c += _pLeftCh.size();
 		}
-		if( _pRightCh != nullptr)
+		if( _pRightCh != null)
 		{
-			c+= _pRightCh->size();
+			c+= _pRightCh.size();
 		}
 		return c;
 	}
-	inline const T& value() const		{return _data;}
-	inline void setValue(const T& v)	{_data=v;}
-	inline bool haveChildren() const	{if (_pLeftCh== nullptr && _pRightCh==nullptr) return false; return true;}
-
-	//0==only root, 1==root children are leafs, and so on
-	int depth() const;
-
-	inline static void iteratePreorder( Node* p_node, void(*ptr_function)(GBTree<T>*) )
-	{
-		if(p_node==nullptr)
-			return;
-		ptr_function( p_node );
-		if( p_node->_pLeftCh != nullptr)
-			GBTree<T>::iteratePreorder(p_node->_pLeftCh,ptr_function );
-		if( p_node->_pRightCh != nullptr)
-			GBTree<T>::iteratePreorder(p_node->_pRightCh ,ptr_function );
-	}
-
-	//process from leaves to root ( root == last element processed)
-	inline static void iteratePostorder( Node* p_node, void(*ptr_function)(GBTree<T>*) )
-	{
-		if(p_node==nullptr)
-			return;
-		if( p_node->_pLeftCh != nullptr)
-			GBTree<T>::iteratePostorder(p_node->_pLeftCh,ptr_function );
-		if( p_node->_pRightCh != nullptr)
-			GBTree<T>::iteratePostorder(p_node->_pRightCh ,ptr_function );
-		ptr_function( p_node );
-	}
-	inline static void iterateInOrder( Node* p_node,  void(*ptr_function)(GBTree<T>*) )
-	{
-		if(p_node==nullptr)
-			return;
-		if( p_node->_pLeftCh != nullptr)
-			GBTree<T>::iterateInOrder(p_node->_pLeftCh, ptr_function);
-		ptr_function( p_node );
-		if( p_node->_pRightCh != nullptr)
-			GBTree<T>::iterateInOrder(p_node->_pRightCh ,ptr_function );
-	}
-
-
-private:
-	static int nodeDepth(GBTree<T>* t);
-	int nodeDepth() const;
-
-	GBTree(const GBTree&);
-	GBTree& operator=(const GBTree&);
-
-	T _data;
-	Node* _pParent;
-	Node* _pLeftCh;
-	Node* _pRightCh;
-
-};//EO class GBTree
-
-//-------------------------------------------------
-//Class GBTreeIterator : to iterate a binary tree
-//-------------------------------------------------
-template<class T> class GBTreeIterator
-{
-	typedef GBTree<T> Node;
-public:
-	GBTreeIterator( Node* ptr = nullptr)				{*this = ptr;}
-	~GBTreeIterator()									{_pNode=nullptr;}
-
-	inline GBTreeIterator& operator= (GBTree<T>* ptr)				{_pNode=ptr; return *this;}
-	inline GBTreeIterator& operator=(const GBTreeIterator& it)		{_pNode=it._pNode; return *this;}
 	
-	inline void clear()												{_pNode= nullptr;}
-
-	//vertical functions
-	
-	inline void moveToRoot()
+	public T value() 				{return _data;}
+	public void setValue(T value) 	{_data = value;}
+	public boolean haveChildren()	{if(_pLeftCh== null && _pRightCh== null) return false; return true;}
+	/**Profondità dell'albero:<br>
+	 *  0== solo root, 1== root e children sono leaf, e così via
+	 *  */
+	public int depth()
 	{
-		if( _pNode != nullptr )
+		int d =0;
+		if(! haveChildren() ) //leaf
 		{
-			while ( _pNode->_pParent != nullptr )
-				_pNode= _pNode->_pParent;
-		}
-	}
-
-	//true if parent exists
-	inline bool up()
-	{
-		if(_pNode != nullptr)
-		{
-			if( _pNode->_parent == nullptr)
-				return false;
-			_pNode = _pNode->_parent;
-		}
-		return true;
-	}
-
-	//move to the left child if exists
-	inline bool leftChild()
-	{
-		if(_pNode->_pLeftCh != nullptr)
-		{
-			_pNode = _pNode->_pLeftCh;
-			return true;
-		}
-		else
-			return false;
-	}
-	//move to the right child if exists
-	inline bool rightChild()
-	{
-		if(_pNode->_pRightCh != nullptr)
-		{
-			_pNode = _pNode->_pRightCh;
-			return true;
-		}
-		else
-			return false;
-	}
-	inline bool haveChildren() const
-	{
-		if(_pNode == nullptr)
-			return false;
-		if (_pNode->_pLeftCh == nullptr && _pNode->_pRightCh == nullptr)
-			return false;
-		return true;
-	}
-
-	//other functions
-	
-	//return false if node have 2 children or iterator is invalid
-	//if left==null append to left, otherwise append to right
-	inline bool appendChild(const T& childValue)
-	{
-		if( _pNode == nullptr)
-			return false;
-		if( _pNode->_pLeftCh != nullptr && _pNode->_pRightCh != nullptr)
-			return false;
-		Node* child = new Node(childValue);
-		child->_pParent = _pNode;
-		if( _pNode->_pLeftCh == nullptr)
-		{
-			_pNode->_pLeftCh = child;
-			return true;
+			return nodeDepth();
 		}
 		else
 		{
-			_pNode->_pRightCh = child;
-			return true;
+			int depL=0, depR=0;
+			if( _pLeftCh!= null )
+			{
+				depL = _pLeftCh.depth();
+			}
+			if( _pRightCh != null )
+			{
+				depR = _pRightCh.depth();
+			}
+			if(depL>d)
+				d= depL;
+			if(depR>d)
+				d= depR;
+			return d;
 		}
 	}
-	inline bool appendLeftChild(const T& childValue)
+	
+	// ------------------------------------------------------------------------- publici - statici ------------------------------------------------------------------------- \\
+	/**dalla root alle foglie (prima sinistra, poi destra) */
+	public static<E> void iteratePreorder(KBTree<E> p_node, Ptr_Function_KBTree<E> ptr_function )
 	{
-		if( _pNode == nullptr)
-			return false;
-		if( _pNode->_pLeftCh != nullptr)
-			return false;
-		Node* child = new Node(childValue);
-		child->_pParent = _pNode;
-		_pNode->_pLeftCh = child;
-		return true;
+		if(p_node == null)
+			return;
+		ptr_function.operation(p_node);
+		if(p_node._pLeftCh != null)
+			iteratePreorder(p_node._pLeftCh, ptr_function);
+		if(p_node._pRightCh != null)
+			iteratePreorder(p_node._pRightCh, ptr_function);
 	}
-	inline bool appendRightChild(const T& childValue)
+	/** process from leaves to root ( root == last element processed) */
+	public static<E> void iteratePostorder(KBTree<E> p_node, Ptr_Function_KBTree<E> ptr_function )
 	{
-		if( _pNode == nullptr)
-			return false;
-		if( _pNode->_pRightCh != nullptr)
-			return false;
-		Node* child = new Node(childValue);
-		child->_pParent = _pNode;
-		_pNode->_pRightCh = child;
-		return true;
+		if(p_node == null)
+			return;
+		if(p_node._pLeftCh != null)
+			iteratePostorder(p_node._pLeftCh, ptr_function);
+		if(p_node._pRightCh != null)
+			iteratePostorder(p_node._pRightCh, ptr_function);
+		ptr_function.operation(p_node);
 	}
-
-	inline bool removeLeftChild()
+	
+	public static<E> void iterateInOrder(KBTree<E> p_node, Ptr_Function_KBTree<E> ptr_function )
 	{
-		if( _pNode == nullptr)
-			return false;
-		if( _pNode->_pLeftCh == nullptr)
-			return false;
-		delete _pNode->_pLeftCh;
-		_pNode->_pLeftCh = nullptr;
-		return true;
+		if(p_node==null)
+			return;
+		if( p_node._pLeftCh != null)
+			iterateInOrder(p_node._pLeftCh, ptr_function);
+		ptr_function.operation( p_node );
+		if( p_node._pRightCh != null)
+			iterateInOrder(p_node._pRightCh ,ptr_function );
 	}
-	inline bool removeRightChild()
+	
+	// ------------------------------------------------------------------------- metodi privati ------------------------------------------------------------------------- \\
+
+	private int nodeDepth()
 	{
-		if( _pNode == nullptr)
-			return false;
-		if( _pNode->_pRightCh == nullptr)
-			return false;
-		delete _pNode->_pRightCh;
-		_pNode->_pRightCh = nullptr;
-		return true;
-	}
-
-	inline bool isValid() const									{return (_pNode!= nullptr);}
-	inline bool isLeftChildValid() const						{return (_pNode->_pLeftCh != nullptr); }
-	inline bool isRightChildValid() const						{return (_pNode->_pRightCh != nullptr); }
-
-	//value in this node
-	inline T& value()											{return _pNode->_data;}
-	inline const T& const_value() const							{return _pNode->_data;}
-	inline Node* node()											{return _pNode;}
-
-	//return a pointer to a Tree with root==left child
-	inline Node* getLeftChild()									{return _pNode->_pLeftCh;}
-	inline Node* getRightChild()								{return _pNode->_pRightCh;}
-	//return number of children
-	inline int childrenNumber() const
-	{
-		int c=0;
-		if(_pNode->_pLeftCh!= nullptr)
-			c+=1;
-		if(_pNode->_pRightCh!= nullptr)
-			c+=1;
-		return c;
-	}
-
-private:
-	Node* _pNode;
-};//EO classGTreeIterator
-
-template<class T> int GBTree<T>::nodeDepth(GBTree<T>* t)
-{
-	int d=0;
-	GBTree<T>* ptr = nullptr;
-	if (t == nullptr)
-		return 0;
-	ptr = t->_pParent;
-	while( ptr != nullptr );
-	{
-		++d;
-		ptr = ptr->_parent;
-	}
-	return d;
-}
-
-template<class T> int GBTree<T>::nodeDepth() const
-{
-	int d = 0;
-	Node* ptr = _pParent;
-	while (ptr != nullptr)
-	{
-		++d;
-		ptr = ptr->_pParent;
-	}
-	return d;
-}
-
-
-template<class T> int GBTree<T>::depth() const
-{
-	int d =0;
-	if(! haveChildren() )							//leaf
-	{
-		return nodeDepth();
-	}
-	else
-	{
-		int depL=0, depR=0;
-		if( _pLeftCh!= nullptr)
+		int d=0;
+		Node ptr = _pParent;
+		while(ptr != null)
 		{
-			depL = _pLeftCh->depth();
+			++d;
+			ptr = ptr._pParent;
 		}
-		if(_pRightCh != nullptr)
+		return d;
+		
+	}
+	// ------------------------------------------------------------------------- privati - statici ------------------------------------------------------------------------- \\
+	private static<T> int nodeDepth(KBTree<T> t)
+	{
+		int d=0;
+		KBTree<T> ptr = null;
+		if(t== null)
+			return 0;
+		ptr = t._pParent;
+		while(ptr != null)
 		{
-			depR = _pRightCh->depth();
+			++d;
+			ptr = ptr._pParent;
 		}
-		if(depL>d)
-			d=depL;
-		if(depR>d)
-			d=depR;
 		return d;
 	}
-}
+}//EO class GBTree
 
-
-*/

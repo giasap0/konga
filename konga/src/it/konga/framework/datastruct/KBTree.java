@@ -7,37 +7,32 @@ import it.konga.framework.datastruct.interfaces.Ptr_Function_KBTree;
  * @author Giampaolo Saporito
  */
 public class KBTree<T>
-{
-	//TODO implementare
-	
-	//questo è solo syntax sugar
-	private class Node extends KBTree<T>
-	{
-		public Node() {super();}
-		public Node(T val) {super(val);}
-	}
+{	
 	// ------------------------------------------------------------------------- fields ------------------------------------------------------------------------- \\
 	protected T _data;
-	protected Node _pParent;
-	protected Node _pLeftCh;
-	protected Node _pRightCh;
+	protected KBTree<T> _pParent;
+	protected KBTree<T> _pLeftCh;
+	protected KBTree<T> _pRightCh;
 	
 	// ------------------------------------------------------------------------- costruttori ------------------------------------------------------------------------- \\
 	public KBTree() 		{}
 	public KBTree(T val) 	{_data = val;}
 	
 	// ------------------------------------------------------------------------- metodi publici ------------------------------------------------------------------------- \\
+	
 	/**delete all children from this node */
 	public void clearChildren()
 	{
 		if( _pLeftCh != null )
 		{
 			_pLeftCh.clearChildren();
+			_pLeftCh._data = null;
 			_pLeftCh = null;
 		}
 		if(_pRightCh != null)
 		{
 			_pRightCh.clearChildren();
+			_pRightCh._data = null;
 			_pRightCh = null;
 		}
 	}
@@ -88,6 +83,14 @@ public class KBTree<T>
 			return d;
 		}
 	}
+	// ------------------------------------------------------------------------- metodi protected ------------------------------------------------------------------------- \\
+	
+	/** mette tutti i puntatori di questo nodo a null */
+	protected void clear()
+	{
+		_data= null;
+		_pParent = _pLeftCh = _pRightCh = null;
+	}
 	
 	// ------------------------------------------------------------------------- publici - statici ------------------------------------------------------------------------- \\
 	/**dalla root alle foglie (prima sinistra, poi destra) */
@@ -124,22 +127,8 @@ public class KBTree<T>
 			iterateInOrder(p_node._pRightCh ,ptr_function );
 	}
 	
-	// ------------------------------------------------------------------------- metodi privati ------------------------------------------------------------------------- \\
-
-	private int nodeDepth()
-	{
-		int d=0;
-		Node ptr = _pParent;
-		while(ptr != null)
-		{
-			++d;
-			ptr = ptr._pParent;
-		}
-		return d;
-		
-	}
-	// ------------------------------------------------------------------------- privati - statici ------------------------------------------------------------------------- \\
-	private static<T> int nodeDepth(KBTree<T> t)
+	// ------------------------------------------------------------------------- protected - statici ------------------------------------------------------------------------- \\
+	protected static<T> int nodeDepth(KBTree<T> t)
 	{
 		int d=0;
 		KBTree<T> ptr = null;
@@ -153,5 +142,21 @@ public class KBTree<T>
 		}
 		return d;
 	}
+	
+	// ------------------------------------------------------------------------- metodi privati ------------------------------------------------------------------------- \\
+
+	private int nodeDepth()
+	{
+		int d=0;
+		KBTree<T> ptr = _pParent;
+		while(ptr != null)
+		{
+			++d;
+			ptr = ptr._pParent;
+		}
+		return d;
+		
+	}
+	
 }//EO class GBTree
 

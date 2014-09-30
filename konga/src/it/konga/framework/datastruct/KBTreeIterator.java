@@ -1,176 +1,172 @@
 package it.konga.framework.datastruct;
 
+/**
+ * Per iterare un binary Tree
+ * @author Giampaolo Saporito
+ */
 public class KBTreeIterator<T>
 {
+	// ------------------------------------------------------------------------- fields ------------------------------------------------------------------------- \\
+	private KBTree<T> _pNode;
 
-}
-
-
-/*
-
-//-------------------------------------------------
-//Class GBTreeIterator : to iterate a binary tree
-//-------------------------------------------------
-template<class T> class GBTreeIterator
-{
-	typedef GBTree<T> Node;
-public:
-	GBTreeIterator( Node* ptr = nullptr)				{*this = ptr;}
-	~GBTreeIterator()									{_pNode=nullptr;}
-
-	inline GBTreeIterator& operator= (GBTree<T>* ptr)				{_pNode=ptr; return *this;}
-	inline GBTreeIterator& operator=(const GBTreeIterator& it)		{_pNode=it._pNode; return *this;}
-	
-	inline void clear()												{_pNode= nullptr;}
-
-	//vertical functions
-	
-	inline void moveToRoot()
+	// ------------------------------------------------------------------------- costruttori ------------------------------------------------------------------------- \\
+	public KBTreeIterator()								{}
+	public KBTreeIterator(KBTree<T> node)
 	{
-		if( _pNode != nullptr )
+		_pNode = node;
+	}
+	public KBTreeIterator(KBTreeIterator<T> other)
+	{
+		_pNode = other._pNode;
+	}
+
+	// ------------------------------------------------------------------------- metodi publici ------------------------------------------------------------------------- \\
+	public void clear()										{ _pNode = null; }
+	public boolean haveChildren()
+	{
+		if(_pNode == null)
+			return false;
+		if (_pNode._pLeftCh == null && _pNode._pRightCh == null)
+			return false;
+		return true;
+	}
+
+	// ------------------------------------------------------------------------- funzioni verticali ------------------------------------------------------------------------- \\
+
+	public void moveToRoot()
+	{
+		if(_pNode != null)
 		{
-			while ( _pNode->_pParent != nullptr )
-				_pNode= _pNode->_pParent;
+			while( _pNode._pParent != null)
+				_pNode = _pNode._pParent;
 		}
 	}
 
-	//true if parent exists
-	inline bool up()
+	/** true if parent exists */
+	public boolean up()
 	{
-		if(_pNode != nullptr)
+		if(_pNode != null)
 		{
-			if( _pNode->_parent == nullptr)
+			if( _pNode._pParent == null)
 				return false;
-			_pNode = _pNode->_parent;
+			_pNode = _pNode._pParent;
 		}
 		return true;
 	}
 
-	//move to the left child if exists
-	inline bool leftChild()
+	/** move to the left child if exists */
+	public boolean leftChild()
 	{
-		if(_pNode->_pLeftCh != nullptr)
+		if(_pNode._pLeftCh != null)
 		{
-			_pNode = _pNode->_pLeftCh;
+			_pNode = _pNode._pLeftCh;
 			return true;
 		}
 		else
 			return false;
 	}
-	//move to the right child if exists
-	inline bool rightChild()
+	
+	/** move to the right child if exists */
+	public boolean rightChild()
 	{
-		if(_pNode->_pRightCh != nullptr)
+		if(_pNode._pRightCh != null)
 		{
-			_pNode = _pNode->_pRightCh;
+			_pNode = _pNode._pRightCh;
 			return true;
 		}
 		else
 			return false;
 	}
-	inline bool haveChildren() const
-	{
-		if(_pNode == nullptr)
-			return false;
-		if (_pNode->_pLeftCh == nullptr && _pNode->_pRightCh == nullptr)
-			return false;
-		return true;
-	}
-
-	//other functions
+	
+	// ------------------------------------------------------------------------- altre funzioni ------------------------------------------------------------------------- \\
 	
 	//return false if node have 2 children or iterator is invalid
-	//if left==null append to left, otherwise append to right
-	inline bool appendChild(const T& childValue)
-	{
-		if( _pNode == nullptr)
-			return false;
-		if( _pNode->_pLeftCh != nullptr && _pNode->_pRightCh != nullptr)
-			return false;
-		Node* child = new Node(childValue);
-		child->_pParent = _pNode;
-		if( _pNode->_pLeftCh == nullptr)
+		//if left==null append to left, otherwise append to right
+		public boolean appendChild( T childValue)
 		{
-			_pNode->_pLeftCh = child;
+			if( _pNode == null)
+				return false;
+			if( _pNode._pLeftCh != null && _pNode._pRightCh != null)
+				return false;
+			KBTree<T> child = new KBTree<T>(childValue);
+			child._pParent = _pNode;
+			if( _pNode._pLeftCh == null)
+			{
+				_pNode._pLeftCh = child;
+				return true;
+			}
+			else
+			{
+				_pNode._pRightCh = child;
+				return true;
+			}
+		}
+		public  boolean appendLeftChild(T childValue)
+		{
+			if( _pNode == null)
+				return false;
+			if( _pNode._pLeftCh != null)
+				return false;
+			KBTree<T>child = new KBTree<T>(childValue);
+			child._pParent = _pNode;
+			_pNode._pLeftCh = child;
 			return true;
 		}
-		else
+		public  boolean appendRightChild(T childValue)
 		{
-			_pNode->_pRightCh = child;
+			if( _pNode == null)
+				return false;
+			if( _pNode._pRightCh != null)
+				return false;
+			KBTree<T> child = new KBTree<T>(childValue);
+			child._pParent = _pNode;
+			_pNode._pRightCh = child;
 			return true;
 		}
-	}
-	inline bool appendLeftChild(const T& childValue)
-	{
-		if( _pNode == nullptr)
-			return false;
-		if( _pNode->_pLeftCh != nullptr)
-			return false;
-		Node* child = new Node(childValue);
-		child->_pParent = _pNode;
-		_pNode->_pLeftCh = child;
-		return true;
-	}
-	inline bool appendRightChild(const T& childValue)
-	{
-		if( _pNode == nullptr)
-			return false;
-		if( _pNode->_pRightCh != nullptr)
-			return false;
-		Node* child = new Node(childValue);
-		child->_pParent = _pNode;
-		_pNode->_pRightCh = child;
-		return true;
-	}
 
-	inline bool removeLeftChild()
-	{
-		if( _pNode == nullptr)
-			return false;
-		if( _pNode->_pLeftCh == nullptr)
-			return false;
-		delete _pNode->_pLeftCh;
-		_pNode->_pLeftCh = nullptr;
-		return true;
-	}
-	inline bool removeRightChild()
-	{
-		if( _pNode == nullptr)
-			return false;
-		if( _pNode->_pRightCh == nullptr)
-			return false;
-		delete _pNode->_pRightCh;
-		_pNode->_pRightCh = nullptr;
-		return true;
-	}
+		public boolean removeLeftChild()
+		{
+			if( _pNode == null)
+				return false;
+			if( _pNode._pLeftCh == null)
+				return false;
+			_pNode._pLeftCh.clearChildren();
+			_pNode._pLeftCh = null;
+			return true;
+		}
+		
+		public boolean removeRightChild()
+		{
+			if( _pNode == null)
+				return false;
+			if( _pNode._pRightCh == null)
+				return false;
+			_pNode._pRightCh.clearChildren();
+			_pNode._pRightCh = null;
+			return true;
+		}
 
-	inline bool isValid() const									{return (_pNode!= nullptr);}
-	inline bool isLeftChildValid() const						{return (_pNode->_pLeftCh != nullptr); }
-	inline bool isRightChildValid() const						{return (_pNode->_pRightCh != nullptr); }
+		public boolean isValid()							{return (_pNode!= null);}
+		public boolean isLeftChildValid()					{return (_pNode._pLeftCh != null); }
+		public boolean isRightChildValid()					{return (_pNode._pRightCh != null); }
 
-	//value in this node
-	inline T& value()											{return _pNode->_data;}
-	inline const T& const_value() const							{return _pNode->_data;}
-	inline Node* node()											{return _pNode;}
+		/** value in this node */
+		public T value()									{return _pNode._data;}
+		public KBTree<T> node()								{return _pNode;}
 
-	//return a pointer to a Tree with root==left child
-	inline Node* getLeftChild()									{return _pNode->_pLeftCh;}
-	inline Node* getRightChild()								{return _pNode->_pRightCh;}
-	//return number of children
-	inline int childrenNumber() const
-	{
-		int c=0;
-		if(_pNode->_pLeftCh!= nullptr)
-			c+=1;
-		if(_pNode->_pRightCh!= nullptr)
-			c+=1;
-		return c;
-	}
+		/** return a pointer to a Tree with root==left child */
+		public KBTree<T> getLeftChild()						{return _pNode._pLeftCh;}
+		/** return a pointer to a Tree with root==right child */
+		public KBTree<T> getRightChild()					{return _pNode._pRightCh;}
+		//return number of children
+		public int childrenNumber()
+		{
+			int c=0;
+			if(_pNode._pLeftCh!= null)
+				c+=1;
+			if(_pNode._pRightCh!= null)
+				c+=1;
+			return c;
+		}
 
-private:
-	Node* _pNode;
-};//EO classGTreeIterator
-
-
-
-*/
+}//EO class KBTreeIterator<T>

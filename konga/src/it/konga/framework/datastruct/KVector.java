@@ -1,8 +1,5 @@
 package it.konga.framework.datastruct;
 
-import it.konga.framework.interfaces.Ptr_Function_Compare;
-
-import java.util.ArrayList;
 
 /**
  * tipo arrayList ma con più metodi

@@ -1,34 +1,42 @@
 package it.konga.framework.datastruct;
 
+import it.konga.framework.interfaces.Ptr_Function_Compare;
+
 /**
- * Binary Search Tree
+ * Binary Search Tree.<br>
+ * Non inserisce due dati uguali.<br>
+ * Bisogna definire una funzione Compare, in grado di comparare due dati<br>
  * @author Giampaolo Saporito
  */
 public class KBSTree<T>
 {
-	//TODO implementarla
-}
+	// ------------------------------------------------------------------------- fields ------------------------------------------------------------------------- \\
+	private Ptr_Function_Compare<T> _compare;
+	private KBTree<T> _pRoot;
 
+	// ------------------------------------------------------------------------- costruttori ------------------------------------------------------------------------- \\
+	KBSTree(Ptr_Function_Compare<T> p_compare)					{_compare = p_compare; _pRoot = null;}
 
-/*
+	// ------------------------------------------------------------------------- metodi publici ------------------------------------------------------------------------- \\
 
-typedef GBTree<T> Node;
-public:
-	GBSTree( int(*p_compare)(T,T) )  : _pRoot(nullptr), _compare(p_compare)		{}
-	virtual ~GBSTree()															{if(_pRoot!= nullptr) delete _pRoot; _pRoot= nullptr;}
+	public int size() 											{return _pRoot.size();}
+	public int depth() 											{return _pRoot.depth();}
 
-	//left if _compare<0, else right (do not insert if data exists)
-	inline void insert(const T& data)
+	/** a sinistra se _compare<0, altrimenti destra.<br> non inserisce se il dato già esiste */
+	public void insert(T data)
 	{
-		GBTreeIterator<T> it = _pRoot;
-		if( _pRoot== nullptr)
-			_pRoot = new Node( data );
+		KBTreeIterator<T> it = new KBTreeIterator<T>(_pRoot);
+		if(_pRoot == null)
+			_pRoot = new KBTree<T>(data);
 		else
 		{
-			while (it.isValid() )
+			int comp;
+			while( it.isValid() )
 			{
-				int comp = _compare(data, it.value() );
-				if (comp < 0)
+				comp = _compare.compare(data, it.value());
+				if(comp == 0)
+					return;
+				else if(comp < 0)
 				{
 					if( !it.leftChild() )
 					{
@@ -36,11 +44,9 @@ public:
 						it.clear();
 					}
 				}
-				else if(comp==0)
-					return;
 				else
 				{
-					if( !it.rightChild() )
+					if( ! it.rightChild() )
 					{
 						it.appendRightChild(data);
 						it.clear();
@@ -50,14 +56,14 @@ public:
 		}// EO else {root exists}
 	}
 
-	//return an iterator pointing to the node with value==data (return invalid it if doesn't exists)
-	inline GBTreeIterator<T> find( const T& data)
+	/** return an iterator pointing to the node with value==data (return invalid it if doesn't exists) */
+	public KBTreeIterator<T> find(T data)
 	{
-		GBTreeIterator<T> current = _pRoot;
+		KBTreeIterator<T> current = new KBTreeIterator<T>(_pRoot);
 		int temp;
 		while( current.isValid() )
 		{
-			temp = _compare( data, current.value() );
+			temp = _compare.compare( data, current.value() );
 			if ( temp == 0 )
 				return current;
 			else if ( temp<0 )
@@ -75,17 +81,5 @@ public:
 		return current;
 	}
 
-	inline int size() const		{return _pRoot->size();}
-	inline int depth() const	{return _pRoot->depth();}			
+}//EO class KBSTree<T>
 
-private:
-	GBSTree(const GBSTree&);
-	GBSTree& operator=(const GBSTree&);
-
-	//return<0 (left<right), return>0(left>right), return0(left==right)
-	int (*_compare)(const T&, const T&);	
-	Node* _pRoot;
-
-
-
-*/

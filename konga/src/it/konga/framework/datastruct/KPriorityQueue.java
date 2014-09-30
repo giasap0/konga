@@ -1,29 +1,46 @@
 package it.konga.framework.datastruct;
 
+import it.konga.framework.interfaces.Ptr_Function_Compare;
+
+import java.util.ArrayList;
+
+
+// ATTENZIONE: non utilizzo l'indice 0 \\
+
+//TODO implementare
+
+/**
+ * Coda Prioritaria
+ * @author Giampaolo Saporito
+ */
 public class KPriorityQueue<T>
 {
-	//TODO implementare
+	// ------------------------------------------------------------------------- fields ------------------------------------------------------------------------- \\
+	private ArrayList<T> _v;
+	private Ptr_Function_Compare<T> _compare;
+	
+	// ------------------------------------------------------------------------- costruttori ------------------------------------------------------------------------- \\
+	/**
+	 * costruisci una coda prioritaria
+	 * @param compare funzione di comparazione per il tipo specificato
+	 */
+	public KPriorityQueue(Ptr_Function_Compare<T> compare)		{_v = new ArrayList<T>(2); _v.add(null); _v.add(null); _compare = compare;}
+	public KPriorityQueue(KPriorityQueue<T> other)				{_v = new ArrayList<T>(other._v); _compare = other._compare; }
+	
+	// ------------------------------------------------------------------------- metodi publici ------------------------------------------------------------------------- \\
+	public int size() 											{return _v.size()-1;}
+	public T first()											{return _v.get(1);}
+	public boolean isEmpty()									{if(_v.size()>1) return false; return true;}
+	//public void clear()											{_v.}
+	
+	// ------------------------------------------------------------------------- metodi privati ------------------------------------------------------------------------- \\
+	//private void walkUp(int i);
+	//private void walkDown(int i);
 }
 
 /*
-
-// ** I do not use index 0 ** //
-
-//---------------------------------------------------------------------------
-//class GHeap : to use as a priority queue (built like a binary ordered Tree)
-//---------------------------------------------------------------------------
-template<class T> class GHeap
-{
 public:
-	//return<0 (left<right), return>0(left>right), return0(left==right)
-	explicit GHeap( int(*p_compare)(const T&, const T&) )		:_v(1), _compare(p_compare)		{}
-	GHeap( const GHeap& other )									: _v(other._v), _compare(other._compare)			{}
-	virtual ~GHeap()											{_compare=nullptr;}
 
-	inline GHeap& operator=(const GHeap& o)						{_v = o._v; _compare=o._compare; return *this;}
-	inline uint size() const									{return _v.size()-1;}
-	inline T& first()											{return _v[1];}
-	inline const T& first() const								{return _v[1];}
 	inline bool isEmpty() const									{if(_v.size()>1) return false; return true;}
 	//clear elements, not function pointer
 	inline void clear()											{_v.resize(1);}
@@ -39,13 +56,7 @@ public:
 	inline bool			operator!=(const GHeap<T>& o) const		{return !this->operator==(o);}
 	inline GHeap<T>&	operator+=(const T& x )					{enqueue(x); return *this;}
 
-private:
-	void walkUp(int i);
-	void walkDown(int i);
 
-	GVector<T> _v;
-	//return<0 (left<right), return>0(left>right), return0(left==right)
-	int (*_compare)(const T&, const T&);
 };
 
 template<class T> inline void GHeap<T>::enqueue(const T& data)

@@ -3,6 +3,7 @@ package it.konga.framework.util;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -14,14 +15,22 @@ import java.util.Locale;
  */
 public class KFormatter
 {
+	private static SimpleDateFormat _dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
+	private static SimpleDateFormat _dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private static SimpleDateFormat _timeFormat = new SimpleDateFormat("HH:mm:ss.SSS");
 	
-	/**
-	 * ritorna lo stamp di data ed orario nel formato yyyy-MM-dd HH:mm:ss.SSS
-	 */
-	public static String getCurrentDateTimeStamp() {
-	    SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-	    Date now = new Date();
-	    return sdfDate.format(now);
+	
+	/** ritorna la data corrente nel format dd/MM/yyyy */
+	public static String getCurrentDate(){
+		return _dateFormat.format(Calendar.getInstance().getTime());
+	}
+	/** ritorna l'ora corrente nel format HH:mm:ss.SSS*/
+	public static String getCurrentTime(){
+		return _timeFormat.format(Calendar.getInstance().getTime() );
+	}
+	/** ritorna lo stamp di data ed orario nel formato dd/MM/yyyy HH:mm:ss.SSS */
+	public static String getCurrentDateTime() {
+		return _dateTimeFormat.format( Calendar.getInstance().getTime());
 	}
 	
 	/**

@@ -39,15 +39,18 @@ public class KPriorityQueue<T>
 	/** insert into queue */
 	public void enqueue(T data)									{_v.add(data); walkUp( _v.size()-1);}
 	/** removing the root node of the heap */
-	public void dequeue()
+	public T dequeue()
 	{
 		int count = _v.size()-1;
+		T temp = null;
 		if(count >= 1)
 		{
+			temp = _v.get(1);			//save for return
 			_v.set(1, _v.get(count));	//root == last
 			walkDown( 1 );				//re-order
 			_v.remove(count);			//remove last
 		}
+		return temp;
 	}
 	
 	// ------------------------------------------------------------------------- metodi privati ------------------------------------------------------------------------- \\
@@ -71,8 +74,6 @@ public class KPriorityQueue<T>
 	private void walkDown(int i)
 	{
 		int parent = i;
-		if(i>= _v.size())
-			throw new IndexOutOfBoundsException("KPriorityQueue - index out of bounds. Index == "+i + " , size = "+_v.size());
 		int child = i*2;
 		T temp = _v.get(parent);
 		int count = _v.size()-1;

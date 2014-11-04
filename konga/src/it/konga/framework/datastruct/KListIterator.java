@@ -10,7 +10,7 @@ import java.util.Iterator;
 public class KListIterator<T> implements Iterator<T>
 {
 
-	protected KLinkedList<T>.ZListNode _pNode;
+	protected KLinkedList<T>.KListNode _pNode;
 	protected KLinkedList<T> _pList;
 	
 	// *************************************************************************************************
@@ -30,7 +30,7 @@ public class KListIterator<T> implements Iterator<T>
 		_pList = it._pList; _pNode = it._pNode;
 	}
 	
-	protected KListIterator(KLinkedList<T> zLinkedList, KLinkedList<T>.ZListNode node)
+	protected KListIterator(KLinkedList<T> zLinkedList, KLinkedList<T>.KListNode node)
 	{
 		_pList = zLinkedList;
 		_pNode = node;
@@ -113,7 +113,7 @@ public class KListIterator<T> implements Iterator<T>
 		{
 			return null;
 		}
-		KLinkedList<T>.ZListNode previous = _pNode;
+		KLinkedList<T>.KListNode previous = _pNode;
 		_pNode = _pNode.next();
 		return previous.getData();
 	}

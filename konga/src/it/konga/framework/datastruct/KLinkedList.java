@@ -19,35 +19,36 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 	// *************************************************************************************************
 	// 											nodo della lista
 	// *************************************************************************************************
-	
+
 	/**
 	 * un nodo della lista
 	 * @author Giampaolo Saporito
 	 */
-	protected class ZListNode implements Serializable
+	protected class KListNode implements Serializable
 	{
 		private static final long serialVersionUID = 2205660939853734004L;
 		private T _data;
-		private ZListNode _pNext;
-		
-		public ZListNode()	{}
+		private KListNode _pNext;
+
+		public KListNode()	{}
 
 		public void clear()
 		{
 			_data = null;
 			_pNext = null;
 		}
-		
+
 		public void insertAfter(T data)
 		{
-			ZListNode newNode = new ZListNode();
+			KListNode newNode = new KListNode();
 			newNode._data = data;
 			newNode._pNext = _pNext;
 			_pNext = newNode;
 		}
+		
 		public T getData()						{return _data;}
 		public void setData(T newValue)			{_data=newValue;}
-		public ZListNode next()					{return _pNext;}
+		public KListNode next()					{return _pNext;}
 
 		@Override
 		public int hashCode()
@@ -66,10 +67,10 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 				return true;
 			if (obj == null)
 				return false;
-			if (!(obj instanceof KLinkedList.ZListNode))
+			if (!(obj instanceof KLinkedList.KListNode))
 				return false;
 			@SuppressWarnings("unchecked")
-			ZListNode other = (ZListNode) obj;
+			KListNode other = (KListNode) obj;
 			if (!getOuterType().equals(other.getOuterType()))
 				return false;
 			if (_data == null)
@@ -91,15 +92,15 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		{
 			return KLinkedList.this;
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		private void readObject(java.io.ObjectInputStream stream) throws java.io.IOException, ClassNotFoundException
 		{
 			stream.defaultReadObject();
 			_data = (T) stream.readObject();
-			_pNext = (ZListNode) stream.readObject();
+			_pNext = (KListNode) stream.readObject();
 		}
-		
+
 		private void writeObject(java.io.ObjectOutputStream stream) throws java.io.IOException
 		{
 			stream.defaultWriteObject();
@@ -107,27 +108,27 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 			stream.writeObject( _pNext );
 		}
 	};
-	
+
 	// ----------------------------------------------------------------------------------- fields ----------------------------------------------------------------------------------- \\
-	protected ZListNode _head;
-	protected ZListNode _tail;
+	protected KListNode _head;
+	protected KListNode _tail;
 	private int _count;
-	
+
 	// ----------------------------------------------------------------------------------- costruttori ----------------------------------------------------------------------------------- \\
-	
+
 	public KLinkedList()
 	{
 		_head=_tail=null;
 		_count = 0;
 	}
-	
+
 	public KLinkedList(KLinkedList<T> other)
 	{
 		_head = _tail = null;
 		_count = 0 ;
 		if ( other.isEmpty() )
 			return;
-		ZListNode ptr = other._head;
+		KListNode ptr = other._head;
 		while ( !ptr.equals(other._tail ) )
 		{
 			append(ptr._data);
@@ -135,27 +136,30 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		}
 		append( other._tail._data);
 	}
-	
+
 	public KLinkedList(T[] array)
 	{
 		for (T t : array) {
 			this.append(t);
 		}
 	}
-	
+
 	// ----------------------------------------------------------------------------------- metodi publici ----------------------------------------------------------------------------------- \\
 
 	public boolean isEmpty()						
 	{
 		if(_head==null) return true; return false;
 	}
+	/** numero di elementi nella lista */
 	public int size() 							{ return _count;}
+	/** primo elemento della lista */
 	public T first()							{ return _head._data; }
+	/** ultimo elemento della lista */
 	public T last()								{ return _tail._data;}
-	public KListIterator<T> begin()				{ return new KListIterator<T>(this,_head); }
+	public KListIterator<T> begin()			{ return new KListIterator<T>(this,_head); }
 	public KListIterator<T> end()				{ return new KListIterator<T>(this,_tail); }
 	@Override
-	public KListIterator<T> iterator()			{ return  begin(); }
+	public KListIterator<T> iterator()		{ return  begin(); }
 	/**
 	 * torna l'iteratore che punta all'eleemento con indice indx. L'indice parte da 0
 	 * @param indx parte da 0
@@ -172,7 +176,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 			itr.next();
 		return itr;
 	}
-	
+
 	/**
 	 * Fa una deep copy dell'oggetto. Implementato tramite serializzazione
 	 */
@@ -182,20 +186,21 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 	{
 		try
 		{
-		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-		ObjectOutputStream objOut = new ObjectOutputStream(byteOut);
-		objOut.writeObject(this);
-		
-		ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
-		ObjectInputStream ois = new ObjectInputStream(byteIn);
-		
+			ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+			ObjectOutputStream objOut = new ObjectOutputStream(byteOut);
+			objOut.writeObject(this);
+
+			ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
+			ObjectInputStream ois = new ObjectInputStream(byteIn);
+
 			return (KLinkedList<T>) ois.readObject();
-		} catch (ClassNotFoundException | IOException e)
+		}
+		catch(IOException | ClassNotFoundException e)
 		{
 			throw new CloneNotSupportedException();
 		}
 	}
-	
+
 	/**
 	 * appende un riferimento all'oggetto
 	 * @param data
@@ -204,7 +209,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 	{
 		if(_head == null)
 		{
-			_head = _tail= new ZListNode();
+			_head = _tail= new KListNode();
 			_head.setData(data);
 		}
 		else
@@ -214,7 +219,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		}
 		_count++;
 	}
-	
+
 	/**
 	 * appende riferimenti agli elementi dell'altra lista
 	 * @param other altra lista
@@ -228,7 +233,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 
 		else
 		{
-			ZListNode ptr = other._head;
+			KListNode ptr = other._head;
 			while( ptr != other._tail )
 			{
 				append( ptr._data);
@@ -249,14 +254,14 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 			this.append(element);
 		}
 	}
-	
+
 	/**
 	 * inserisce un elemento all'inizio della lista
 	 * @param data valore da attribuire al nodo
 	 */
 	void prepend( T data)
 	{
-		ZListNode newNode = new ZListNode();
+		KListNode newNode = new KListNode();
 		newNode._data = data;
 		newNode._pNext = _head;
 		_head = newNode;
@@ -264,7 +269,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 			_tail = _head;
 		_count++;
 	}
-	
+
 	/** inserts an item AFTER the current iterator (append if iterator is invalid)
 	 * @param itr iteratore posizione
 	 * @param value valore da inserire
@@ -272,7 +277,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 	void insert(  KListIterator<T> itr, T value)
 	{
 		if( ! itr._pList.equals(this) ) 		//non è iteratore di questa lista
-			throw new IllegalArgumentException("ZLinkedList::insert(itr, value) - invalid iterator");
+			throw new IllegalArgumentException("KLinkedList::insert(itr, value) - invalid iterator");
 		if( itr._pNode != null)					//iteratore valido
 		{
 			itr._pNode.insertAfter(value);
@@ -295,9 +300,9 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 	 */
 	public void remove(KListIterator<T> itr)
 	{
-		ZListNode node = _head;
+		KListNode node = _head;
 		if( ! itr._pList.equals(this) ) 			//non è di questa lista
-			throw new IllegalArgumentException("ZLinkedList::remove(itr) - invalid iterator");
+			throw new IllegalArgumentException("KLinkedList::remove(itr) - invalid iterator");
 		if(itr._pNode == null )						//iterator is invalid
 			return;
 		if(itr._pNode.equals(_head) )				//iterator is head
@@ -310,7 +315,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 			//vai al nodo prima di quello da cancellare
 			while( ! node.next().equals( itr._pNode ))		
 				node = node.next();
-			 itr.next();						//muovi l'iterator fino al nodo da cancellare
+			itr.next();						//muovi l'iterator fino al nodo da cancellare
 			if( node.next().equals(_tail))
 			{
 				_tail= node;						//update tail
@@ -321,7 +326,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 	}
 	public void removeFirst()
 	{
-		ZListNode node = null;
+		KListNode node = null;
 		if( _head != null )
 		{
 			node = _head.next();
@@ -333,7 +338,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 	}
 	public void removeLast()
 	{
-		ZListNode node = _head;
+		KListNode node = _head;
 		if( _head == null)				//lista vuota
 			return;
 		if(_head == _tail)				//only 1 element
@@ -365,11 +370,11 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		{
 			throw new IndexOutOfBoundsException("KLinkedList::removeRange(int,int) - index out of bounds. size == "+ this._count +" , fromIndex == "+fromIndex+" , toIndex == "+toIndex);
 		}
-		KLinkedList<T>.ZListNode ptrFrom = nodeAtIndex(fromIndex-1);
-		KLinkedList<T>.ZListNode ptrNext = ptrFrom._pNext;
+		KLinkedList<T>.KListNode ptrFrom = nodeAtIndex(fromIndex-1);
+		KLinkedList<T>.KListNode ptrNext = ptrFrom._pNext;
 		for(int i=fromIndex; i <= toIndex; i++)
 		{
-			KLinkedList<T>.ZListNode temp = ptrNext;
+			KLinkedList<T>.KListNode temp = ptrNext;
 			ptrNext = ptrNext._pNext;
 			temp.clear();
 			--_count;
@@ -382,8 +387,8 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 	}
 	public void clear()
 	{
-		ZListNode itr = _head;
-		ZListNode next = null;
+		KListNode itr = _head;
+		KListNode next = null;
 		while( itr != null )
 		{
 			next = itr.next();
@@ -393,39 +398,81 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		_head = _tail = null;
 		_count=0;
 	}
-	
+
 	public void replace(KListIterator<T> itr, T newValue)
 	{
 		if( ! itr._pList.equals(this) )
-			throw new IllegalArgumentException("ZLinkedList::replace(itr, value) - invalid iterator");
+			throw new IllegalArgumentException("KLinkedList::replace(itr, value) - invalid iterator");
 		if(itr._pNode == null)
 			return;
 		itr._pNode._data = newValue;
 	}
-	
-	
+
+	/** non agisce su elementi null, se l'input == null torna false */
+	public boolean contains(T item)
+	{
+		if(item==null)
+			return false;
+		if(size() <= 0)
+			return false;
+		for (T x : this)
+		{
+			if( x == null)
+				continue;
+			if(x.equals(item))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Torna un iteratore che punta al primo oggetto.equals(item).<br>
+	 * Se nessun oggetto è presente con questa caratteristica torna null
+	 * @param item oggetto con cui fare equals
+	 * @return iteratore nella posizione
+	 */
+	public KListIterator<T> iteratorOf(T item)
+	{
+		if(item == null)
+			throw new NullPointerException("KLinkedList::iteratorOf(T) - parametro in input null");
+		KListIterator<T> itr = begin();
+		while(itr.hasNext())
+		{
+			T x = itr.next();
+			if( x == null)
+				continue;
+			if( x.equals(item) )
+			{
+				return itr;
+			}
+		}
+		return null;
+	}
+
 
 	// ------------------------------------------------------------------------------------------ Private ------------------------------------------------------------------------------------------ \\
-	
-	private KLinkedList<T>.ZListNode nodeAtIndex(int index)
+
+	private KLinkedList<T>.KListNode nodeAtIndex(int index)
 	{
-		KLinkedList<T>.ZListNode ptr = _head;
+		KLinkedList<T>.KListNode ptr = _head;
 		for(int i=0; i < index; i++)
 		{
 			ptr = ptr._pNext;
 		}
 		return ptr;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void readObject(java.io.ObjectInputStream stream) throws java.io.IOException, ClassNotFoundException
 	{
 		stream.defaultReadObject();
 		_count = stream.readInt();
-		_head = (ZListNode) stream.readObject();
-		_tail = (ZListNode) stream.readObject();
+		_head = (KListNode) stream.readObject();
+		_tail = (KListNode) stream.readObject();
 	}
-	
+
 	private void writeObject(java.io.ObjectOutputStream stream) throws java.io.IOException
 	{
 		stream.defaultWriteObject();
@@ -433,5 +480,6 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		stream.writeObject( _head );
 		stream.writeObject( _tail );
 	}
-	
+
+
 }

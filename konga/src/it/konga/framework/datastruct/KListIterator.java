@@ -9,15 +9,13 @@ import java.util.Iterator;
  */
 public class KListIterator<T> implements Iterator<T>
 {
-
 	protected KLinkedList<T>.KListNode _pNode;
 	protected KLinkedList<T> _pList;
 	
 	// *************************************************************************************************
 	// 									costruttori
 	// *************************************************************************************************
-	public KListIterator(){
-	}
+	public KListIterator()	{ }
 	
 	public KListIterator( KLinkedList<T> pList)
 	{
@@ -79,7 +77,7 @@ public class KListIterator<T> implements Iterator<T>
 	@Override
 	public String toString()
 	{
-		return "ZListIterator on List with code " + _pList.hashCode();
+		return "KListIterator on List with code " + _pList.hashCode();
 	}
 
 	/**

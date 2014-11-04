@@ -13,7 +13,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 /**
  * Questa imploementazione utilizza una matrice di double per inserire i dati<br>
  * Setta tutte le celle su excel di tipo "numeric"<br>
- * Sarà quindi poi possibile effettuare su di esse calcoli di vario genere
+ * Sarà quindi poi possibile effettuare su di esse calcoli di vario genere<br>
+ * Scrive file *.xls
  * @author Giampaolo Saporito
  * @Date 02.09.2014
  */

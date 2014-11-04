@@ -47,7 +47,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 	 * Questo oggetto permette di scrivere su un outputStream un file excel<br>
 	 * A partire da una matrice di stringhe va a scrivere una semplice tabella<br>
 	 * Ereditare da questa se si vogliono cambiare gli stili o la formattazione del foglio<br>
-	 * Passare gli array nomiRighe , nomiColonne se si desidera inserirli. O tramite costruttore o tramite setters
+	 * Passare gli array nomiRighe , nomiColonne se si desidera inserirli. O tramite costruttore o tramite setters<br>
+	 * Scrive file *.xls
 	 *  
 	 * @author Giampaolo Saporito
 	 * @Date - 02.09.2014

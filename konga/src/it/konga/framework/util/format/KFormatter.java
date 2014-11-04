@@ -1,4 +1,6 @@
-package it.konga.framework.util;
+package it.konga.framework.util.format;
+
+import it.konga.framework.util.KMath;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

@@ -1,6 +1,4 @@
-1) creare un jar del progetto konga e metterlo in konga-libs / generated_jar
-2) copiare questo jar anche in web_app / WEB-INF/ lib
-
+1) creare un jar del progetto konga e metterlo in web_app / WEB-INF/ lib
 
 ------------------------------------------------------------------------------------------
 3) SE si aggiungono nuove librerie, referenze, vanno inserite in konga-libs

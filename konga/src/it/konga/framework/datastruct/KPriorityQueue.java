@@ -22,8 +22,13 @@ public class KPriorityQueue<T>
 	 * costruisci una coda prioritaria
 	 * @param compare funzione di comparazione per il tipo specificato
 	 */
-	public KPriorityQueue(Ptr_Function_Compare<T> compare)		{_v = new ArrayList<T>(2); _v.add(null); _compare = compare;}
-	public KPriorityQueue(KPriorityQueue<T> other)				{_v = new ArrayList<T>(other._v); _compare = other._compare; }
+	public KPriorityQueue(Ptr_Function_Compare<T> compare)							{_v = new ArrayList<T>(2); _v.add(null); _compare = compare;}
+	/**
+	 * costruisci una coda prioritaria con una capacità iniziale-<br>(size==0)
+	 * @param compare funzione di comparazione per il tipo specificato
+	 */
+	public KPriorityQueue(Ptr_Function_Compare<T> compare, int initialCapacity)		{_v = new ArrayList<T>(initialCapacity); _v.add(null); _compare = compare;}
+	public KPriorityQueue(KPriorityQueue<T> other)									{_v = new ArrayList<T>(other._v); _compare = other._compare; }
 
 	// ------------------------------------------------------------------------- metodi publici ------------------------------------------------------------------------- \\
 		

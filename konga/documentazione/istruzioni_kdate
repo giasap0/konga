@@ -1,0 +1,147 @@
+
+	KDATE:
+		
+	>>> E' possibile passare in input sia java.util.Date, sia java.sql.Date:
+	
+	java.util.Date dataUtl = new java.util.Date();
+	java.sql.Date  dataSql = new java.sql.Date(dataUtl.getTime());
+	
+	
+	>>> Se il valore in input è di tipo String occorre passare anche il pattern di input.
+	>>> Per formattare il numero possiamo richiamare i metodi get specifici:
+	
+		new KDate("2013", KDate.YYYY)											.getPeriodo() 		--> 	01.2013
+		new KDate("2013", KDate.YYYY)											.getPeriodoMMM() 	--> 	gen 2013
+		new KDate("2013", KDate.YYYY)											.getPeriodoMMMMM() 	--> 	gennaio 2013
+		new KDate("2013", KDate.YYYY)											.getData() 			--> 	01.01.2013
+		new KDate("2013", KDate.YYYY)											.getTimestamp() 	--> 	01.01.2013 00:00:00
+		
+		new KDate("201304", KDate.YYYYMM)										.getAnno() 			--> 	2013
+		new KDate("201304", KDate.YYYYMM)										.getPeriodo() 		--> 	04.2013
+		new KDate("201304", KDate.YYYYMM)										.getPeriodoMMM() 	--> 	apr 2013
+		new KDate("201304", KDate.YYYYMM)										.getPeriodoMMMMM() 	--> 	aprile 2013
+		new KDate("201304", KDate.YYYYMM)										.getData() 			--> 	01.04.2013
+		new KDate("201304", KDate.YYYYMM)										.getTimestamp() 	--> 	01.04.2013 00:00:00
+		
+		new KDate("20130405", KDate.YYYYMMDD)									.getAnno() 			--> 	2013
+		new KDate("20130405", KDate.YYYYMMDD)									.getPeriodo() 		--> 	04.2013
+		new KDate("20130405", KDate.YYYYMMDD)									.getPeriodoMMM() 	--> 	apr 2013
+		new KDate("20130405", KDate.YYYYMMDD)									.getPeriodoMMMMM() 	--> 	aprile 2013
+		new KDate("20130405", KDate.YYYYMMDD)									.getData() 			--> 	05.04.2013
+		new KDate("20130405", KDate.YYYYMMDD)									.getTimestamp() 	--> 	05.04.2013 00:00:00
+		
+		new KDate("05.04.2013", KDate.DD_MM_YYYY)								.getAnno() 			--> 	2013
+		new KDate("05.04.2013", KDate.DD_MM_YYYY)								.getPeriodo() 		--> 	04.2013
+		new KDate("05.04.2013", KDate.DD_MM_YYYY)								.getPeriodoMMM() 	--> 	apr 2013
+		new KDate("05.04.2013", KDate.DD_MM_YYYY)								.getPeriodoMMMMM() 	--> 	aprile 2013
+		new KDate("05.04.2013", KDate.DD_MM_YYYY)								.getData() 			--> 	05.04.2013
+		new KDate("05.04.2013", KDate.DD_MM_YYYY)								.getTimestamp() 	--> 	05.04.2013 00:00:00
+		new KDate("05.04.2013", KDate.DD_MM_YYYY)								.getDataYYYYMMDD() 	--> 	20130405
+		
+		new KDate(dataUtl)													.getAnno() 			--> 	2013
+		new KDate(dataUtl)													.getPeriodo() 		--> 	04.2013
+		new KDate(dataUtl)													.getPeriodoMMM() 	--> 	apr 2013
+		new KDate(dataUtl)													.getPeriodoMMMMM() 	--> 	aprile 2013
+		new KDate(dataUtl)													.getData() 			--> 	05.04.2013
+		new KDate(dataUtl)													.getTimestamp() 	--> 	05.04.2013 15:52:27
+		new KDate(dataUtl)													.getDataYYYYMMDD() 	--> 	20130405
+		new KDate(dataUtl)													.getOra() 			--> 	15:52:27
+		
+		new KDate(dataSql)													.getAnno() 			--> 	2013
+		new KDate(dataSql)													.getPeriodo() 		--> 	04.2013
+		new KDate(dataSql)													.getPeriodoMMM() 	--> 	apr 2013
+		new KDate(dataSql)													.getPeriodoMMMMM() 	--> 	aprile 2013
+		new KDate(dataSql)													.getData() 			--> 	05.04.2013
+		new KDate(dataSql)													.getTimestamp() 	--> 	05.04.2013 15:52:27
+		new KDate(dataUtl)													.getDataYYYYMMDD() 	--> 	20130405
+		new KDate(dataUtl)													.getOra()	 		--> 	15:52:27
+
+
+	>>> ... oppure possiamo specificare il pattern di output nel costruttore:
+	
+		new KDate("2013", KDate.YYYY, KDate.MM_YYYY) 							.toString() 		--> 	01.2013
+		new KDate("2013", KDate.YYYY, KDate.M12_YYYY) 							.toString() 		--> 	12.2013
+		new KDate("2013", KDate.YYYY, KDate.MMM_YYYY) 							.toString() 		--> 	gen 2013
+		new KDate("2013", KDate.YYYY, KDate.MMMMM_YYYY) 						.toString() 		--> 	gennaio 2013
+		new KDate("2013", KDate.YYYY, KDate.DD_MM_YYYY) 						.toString() 		--> 	01.01.2013
+		new KDate("2013", KDate.YYYY, "dd/MM/yyyy") 							.toString() 		--> 	01/01/2013
+		new KDate("2013", KDate.YYYY, "dd-MM-yyyy") 							.toString() 		--> 	01-01-2013	
+		new KDate("2013", KDate.YYYY, KDate.DD_MM_YYYY_HH_MM_SS) 				.toString() 		--> 	01.01.2013 00:00:00
+		
+		new KDate("201304", KDate.YYYYMM, KDate.YYYY) 							.toString() 		--> 	2013
+		new KDate("201304", KDate.YYYYMM, KDate.MM_YYYY) 						.toString() 		--> 	04.2013
+		new KDate("201304", KDate.YYYYMM, KDate.M12_YYYY) 						.toString() 		--> 	12.2013
+		new KDate("201304", KDate.YYYYMM, KDate.MMM_YYYY) 						.toString() 		--> 	apr 2013
+		new KDate("201304", KDate.YYYYMM, KDate.MMMMM_YYYY) 					.toString() 		--> 	aprile 2013
+		new KDate("201304", KDate.YYYYMM, KDate.DD_MM_YYYY) 					.toString() 		--> 	01.04.2013
+		new KDate("201304", KDate.YYYYMM, "dd/MM/yyyy") 						.toString() 		--> 	01/04/2013
+		new KDate("201304", KDate.YYYYMM, "dd-MM-yyyy") 						.toString() 		--> 	01-04-2013		
+		new KDate("201304", KDate.YYYYMM, KDate.DD_MM_YYYY_HH_MM_SS) 			.toString() 		--> 	01.04.2013 00:00:00
+		
+		new KDate("20130405", KDate.YYYYMMDD, KDate.YYYY) 						.toString() 		--> 	2013
+		new KDate("20130405", KDate.YYYYMMDD, KDate.MM_YYYY) 					.toString() 		--> 	04.2013
+		new KDate("20130405", KDate.YYYYMMDD, KDate.M12_YYYY) 					.toString() 		--> 	12.2013
+		new KDate("20130405", KDate.YYYYMMDD, KDate.MMM_YYYY) 					.toString() 		--> 	apr 2013
+		new KDate("20130405", KDate.YYYYMMDD, KDate.MMMMM_YYYY) 				.toString() 		--> 	aprile 2013
+		new KDate("20130405", KDate.YYYYMMDD, KDate.DD_MM_YYYY) 				.toString() 		--> 	05.04.2013
+		new KDate("20130405", KDate.YYYYMMDD, "dd/MM/yyyy") 					.toString() 		--> 	05/04/2013
+		new KDate("20130405", KDate.YYYYMMDD, "dd-MM-yyyy") 					.toString() 		--> 	05-04-2013
+		new KDate("20130405", KDate.YYYYMMDD, KDate.DD_MM_YYYY_HH_MM_SS) 		.toString() 		--> 	05.04.2013 00:00:00
+		
+		new KDate("05.04.2013", KDate.DD_MM_YYYY, KDate.YYYY) 					.toString() 		--> 	2013
+		new KDate("05.04.2013", KDate.DD_MM_YYYY, KDate.MM_YYYY) 				.toString() 		--> 	04.2013
+		new KDate("05.04.2013", KDate.DD_MM_YYYY, KDate.M12_YYYY) 				.toString() 		--> 	12.2013
+		new KDate("05.04.2013", KDate.DD_MM_YYYY, KDate.MMM_YYYY) 				.toString() 		--> 	apr 2013
+		new KDate("05.04.2013", KDate.DD_MM_YYYY, KDate.MMMMM_YYYY) 			.toString() 		--> 	aprile 2013
+		new KDate("05.04.2013", KDate.DD_MM_YYYY, KDate.DD_MM_YYYY) 			.toString() 		--> 	05.04.2013
+		new KDate("05.04.2013", KDate.DD_MM_YYYY, "dd/MM/yyyy") 				.toString() 		--> 	05/04/2013
+		new KDate("05.04.2013", KDate.DD_MM_YYYY, "dd-MM-yyyy") 				.toString() 		--> 	05-04-2013
+		new KDate("05.04.2013", KDate.DD_MM_YYYY, KDate.DD_MM_YYYY_HH_MM_SS)	.toString() 		--> 	05.04.2013 00:00:00
+		new KDate("05.04.2013", KDate.DD_MM_YYYY, KDate.YYYYMMDD) 				.toString() 		--> 	20130405
+		
+		new KDate(dataUtl, KDate.YYYY) 										.toString() 		--> 	2013
+		new KDate(dataUtl, KDate.MM_YYYY) 									.toString() 		--> 	04.2013
+		new KDate(dataUtl, KDate.M12_YYYY) 									.toString() 		--> 	12.2013
+		new KDate(dataUtl, KDate.MMM_YYYY) 									.toString() 		--> 	apr 2013
+		new KDate(dataUtl, KDate.MMMMM_YYYY) 									.toString() 		--> 	aprile 2013
+		new KDate(dataUtl, KDate.DD_MM_YYYY) 									.toString() 		--> 	05.04.2013
+		new KDate(dataUtl, "dd/MM/yyyy") 									.toString() 		--> 	05/04/2013
+		new KDate(dataUtl, "dd-MM-yyyy") 									.toString() 		--> 	05-04-2013
+		new KDate(dataUtl, KDate.DD_MM_YYYY_HH_MM_SS) 						.toString() 		--> 	05.04.2013 15:52:27
+		new KDate(dataUtl, KDate.YYYYMMDD) 									.toString() 		--> 	20130405
+		new KDate(dataUtl, KDate.HH_MM_SS) 									.toString() 		--> 	15:52:27
+		
+		new KDate(dataSql, KDate.YYYY) 										.toString() 		--> 	2013
+		new KDate(dataSql, KDate.MM_YYYY) 									.toString() 		--> 	04.2013
+		new KDate(dataSql, KDate.M12_YYYY) 									.toString() 		--> 	12.2013
+		new KDate(dataSql, KDate.MMM_YYYY) 									.toString() 		--> 	apr 2013
+		new KDate(dataSql, KDate.MMMMM_YYYY) 									.toString() 		--> 	aprile 2013
+		new KDate(dataSql, KDate.DD_MM_YYYY) 									.toString() 		--> 	05.04.2013
+		new KDate(dataSql, "dd/MM/yyyy") 									.toString() 		--> 	05/04/2013
+		new KDate(dataSql, "dd-MM-yyyy") 									.toString() 		--> 	05-04-2013
+		new KDate(dataSql, KDate.DD_MM_YYYY_HH_MM_SS) 						.toString() 		--> 	05.04.2013 15:52:27
+		new KDate(dataSql, KDate.YYYYMMDD) 									.toString() 		--> 	20130405
+		new KDate(dataSql, KDate.HH_MM_SS) 									.toString() 		--> 	15:52:27
+
+
+	>>> A prescindere da come viene creato l'oggetto KDate, possiamo sempre convertirlo in java.util.Date o java.sql.Date:
+
+		new KDate("05.04.2013", KDate.DD_MM_YYYY))							.getDate()			-->		Fri Apr 05 00:00:00 CEST 2013
+		new KDate("05.04.2013", KDate.DD_MM_YYYY))							.getSqlDate()		-->		2013-04-05
+
+
+	>>> E' possibile impostare un prefisso e un suffisso nel pattern:
+
+		new KDate("20130405", KDate.YYYYMMDD, "'('"+KDate.DD_MM_YYYY+"')'") 	.toString() 		--> 	(05.04.2013)
+		
+		
+	>>> Nel caso vi siano più date che hanno le stesse configurazioni, è possibile passare ai costruttori
+	>>> un oggetto KDate_Params definito una volta sola:
+	
+		KDate_Params configData = new KDate_Params(KDate.YYYYMMDD, KDate.DD_MM_YYYY);
+		
+		new KDate("19800430", configData) 									.toString() 		--> 	30.04.1980
+		new KDate("20070228", configData)	 								.toString() 		--> 	28.02.2007
+		new KDate("20130329", configData) 									.toString() 		--> 	29.03.2013
+		new KDate("99990101", configData)	 								.toString() 		--> 	SCADENZA INDETERMINATA
+	

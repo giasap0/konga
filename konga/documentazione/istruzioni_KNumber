@@ -1,0 +1,141 @@
+
+	KNumber:
+		
+	>>> E' possibile passare valori numerici di tipo diverso, sia primitivi, sia wrapper:
+		
+		int    numInt     = 1234567890;
+		long   numLong    = 123456789012345L;
+		double numDouble  = 123456789.67890;
+		double numDouble2 = 12.34;
+		BigDecimal numBD  = new BigDecimal("123456789012345.67890");
+		
+	>>> Se il valore in input è di tipo String e viene usata la virgola come separatore dei decimali e il punto come separatore delle migliaia
+	>>> occorre specificare anche il locale:
+		
+		String numStr1    = "123456789.67890";
+		String numStr2    = "123,456,789.67890";
+		String numStr3    = "123.456.789,67890";	<-- Locale.ITALIAN
+		String numStr4    = "12.34";
+		String numStr5    = "12,34";				<-- Locale.ITALIAN
+		
+	>>> Per formattare il numero possiamo richiamare i metodi get specifici:
+		
+		new KNumber(numInt):             									.getImp0() 		--> 	1.234.567.890
+		new KNumber(numLong):            									.getImp0() 		--> 	123.456.789.012.345
+		new KNumber(numDouble):          									.getImp2() 		--> 	123.456.789,68
+		new KNumber(numDouble2):         									.getImp1() 		--> 	12,3
+		new KNumber(numDouble2):     										.getPerc2_00() 	--> 	12,34 %
+		new KNumber(numBD):              									.getImp2() 		--> 	123.456.789.012.345,69
+		new KNumber(numStr1):            									.getImp2() 		--> 	123.456.789,68
+		new KNumber(numStr2):            									.getImp2() 		--> 	123.456.789,68
+		new KNumber(numStr3, KNumber.LOCALE_IT): 								.getImp2() 		--> 	123.456.789,68
+		new KNumber(numStr4):            									.getImp1() 		--> 	12,3
+		new KNumber(numStr4):        										.getPerc2_00() 	--> 	12,34 %
+		new KNumber(numStr5, KNumber.LOCALE_IT):     							.getImp1() 		--> 	12,3
+		new KNumber(numStr5, KNumber.LOCALE_IT): 								.getPerc2_00() 	--> 	12,34 %
+		
+	>>> ... possiamo specificare il formato	nel costruttore:
+		
+		new KNumber(numInt, KNumber.Formato.IMP0):             				.toString() 	--> 	1.234.567.890
+		new KNumber(numLong, KNumber.Formato.IMP0):            				.toString() 	--> 	123.456.789.012.345
+		new KNumber(numDouble, KNumber.Formato.IMP2):          				.toString() 	--> 	123.456.789,68
+		new KNumber(numDouble2, KNumber.Formato.IMP1):         				.toString() 	--> 	12,3
+		new KNumber(numDouble2, KNumber.Formato.PERC2_00):     				.toString() 	--> 	12,34 %
+		new KNumber(numBD, KNumber.Formato.IMP2):              				.toString() 	--> 	123.456.789.012.345,69
+		new KNumber(numStr1, KNumber.Formato.IMP2):            				.toString() 	--> 	123.456.789,68
+		new KNumber(numStr2, KNumber.Formato.IMP2):            				.toString() 	--> 	123.456.789,68
+		new KNumber(numStr3, KNumber.LOCALE_IT, KNumber.Formato.IMP2): 		.toString() 	--> 	123.456.789,68
+		new KNumber(numStr4, KNumber.Formato.IMP1):            				.toString() 	--> 	12,3
+		new KNumber(numStr4, KNumber.Formato.PERC2_00):        				.toString() 	--> 	12,34 %
+		new KNumber(numStr5, KNumber.LOCALE_IT, KNumber.Formato.IMP1):     	.toString() 	--> 	12,3
+		new KNumber(numStr5, KNumber.LOCALE_IT, KNumber.Formato.PERC2_00): 	.toString() 	--> 	12,34 %
+		
+	>>> ... possiamo specificare il pattern nel costruttore:	
+		
+		new KNumber(numInt, KNumber.$_$$0):                    				.toString() 	--> 	1.234.567.890
+		new KNumber(numLong, KNumber.$_$$0):                   				.toString() 	--> 	123.456.789.012.345
+		new KNumber(numDouble, KNumber.$_$$0_00):              				.toString() 	--> 	123.456.789,68
+		new KNumber(numDouble2, KNumber.$_$$0_0):              				.toString() 	--> 	12,3
+		new KNumber(numDouble2, KNumber.$_$$0_00_P):           				.toString() 	--> 	12,34 %
+		new KNumber(numBD, KNumber.$_$$0_00):                  				.toString() 	--> 	123.456.789.012.345,68
+		new KNumber(numStr1, KNumber.$_$$0_00):                				.toString() 	--> 	123.456.789,68
+		new KNumber(numStr2, KNumber.$_$$0_00):                				.toString() 	--> 	123.456.789,68
+		new KNumber(numStr3, KNumber.LOCALE_IT, KNumber.$_$$0_00):     		.toString() 	--> 	123.456.789,68
+		new KNumber(numStr4, KNumber.$_$$0_0):                 				.toString() 	--> 	12,3
+		new KNumber(numStr4, KNumber.$_$$0_00_P):              				.toString() 	--> 	12,34 %
+		new KNumber(numStr5, KNumber.LOCALE_IT, KNumber.$_$$0_0):      		.toString() 	--> 	12,3
+		new KNumber(numStr5, KNumber.LOCALE_IT, KNumber.$_$$0_00_P):   		.toString() 	--> 	12,34 %
+		
+	>>> A prescindere da come viene creato l'oggetto KNumber, possiamo sempre convertirlo in double	
+		
+		new KNumber(numInt):             									.getDouble() 	--> 	1.23456789E9
+		new KNumber(numLong):            									.getDouble() 	--> 	1.23456789012345E14
+		new KNumber(numDouble):          									.getDouble() 	--> 	1.234567896789E8
+		new KNumber(numDouble2):         									.getDouble() 	--> 	12.34
+		new KNumber(numDouble2):     										.getDouble() 	--> 	12.34
+		new KNumber(numBD):              									.getDouble() 	--> 	1.2345678901234567E14
+		new KNumber(numStr1):            									.getDouble() 	--> 	1.234567896789E8
+		new KNumber(numStr2):            									.getDouble() 	--> 	1.234567896789E8
+		new KNumber(numStr3, KNumber.LOCALE_IT): 								.getDouble() 	--> 	1.234567896789E8
+		new KNumber(numStr4):            									.getDouble() 	--> 	12.34
+		new KNumber(numStr5, KNumber.LOCALE_IT):     							.getDouble() 	--> 	12.34
+		
+		new KNumber(numInt, KNumber.Formato.IMP0):             				.getDouble() 	--> 	1.23456789E9
+		new KNumber(numLong, KNumber.Formato.IMP0):            				.getDouble() 	--> 	1.23456789012345E14
+		new KNumber(numDouble, KNumber.Formato.IMP2):          				.getDouble() 	--> 	1.234567896789E8
+		new KNumber(numDouble2, KNumber.Formato.IMP1):         				.getDouble() 	--> 	12.34
+		new KNumber(numDouble2, KNumber.Formato.PERC2_00):     				.getDouble() 	--> 	12.34
+		new KNumber(numBD, KNumber.Formato.IMP2):              				.getDouble() 	--> 	1.2345678901234567E14
+		new KNumber(numStr1, KNumber.Formato.IMP2):            				.getDouble() 	--> 	1.234567896789E8
+		new KNumber(numStr2, KNumber.Formato.IMP2):            				.getDouble() 	--> 	1.234567896789E8
+		new KNumber(numStr3, KNumber.LOCALE_IT, KNumber.Formato.IMP2): 		.getDouble() 	--> 	1.234567896789E8
+		new KNumber(numStr4, KNumber.Formato.IMP1):            				.getDouble() 	--> 	12.34
+		new KNumber(numStr4, KNumber.Formato.PERC2_00):        				.getDouble() 	--> 	12.34
+		new KNumber(numStr5, KNumber.LOCALE_IT, KNumber.Formato.IMP2):     	.getDouble() 	--> 	12.34
+		new KNumber(numStr5, KNumber.LOCALE_IT, KNumber.Formato.PERC2_00): 	.getDouble() 	--> 	12.34
+		
+		new KNumber(numInt, KNumber.$_$$0):                    				.getDouble() 	--> 	1.23456789E9
+		new KNumber(numLong, KNumber.$_$$0):                   				.getDouble() 	--> 	1.23456789012345E14
+		new KNumber(numDouble, KNumber.$_$$0_00):              				.getDouble() 	--> 	1.234567896789E8
+		new KNumber(numDouble2, KNumber.$_$$0_0):              				.getDouble() 	--> 	12.34
+		new KNumber(numDouble2, KNumber.$_$$0_00_P):           				.getDouble() 	--> 	12.34
+		new KNumber(numBD, KNumber.$_$$0_00):                  				.getDouble() 	--> 	1.2345678901234567E14
+		new KNumber(numStr1, KNumber.$_$$0_00):                				.getDouble() 	--> 	1.234567896789E8
+		new KNumber(numStr2, KNumber.$_$$0_00):                				.getDouble() 	--> 	1.234567896789E8
+		new KNumber(numStr3, KNumber.LOCALE_IT, KNumber.$_$$0_00):     		.getDouble() 	--> 	1.234567896789E8
+		new KNumber(numStr4, KNumber.$_$$0_0):                 				.getDouble() 	--> 	12.34
+		new KNumber(numStr4, KNumber.$_$$0_00_P):              				.getDouble() 	--> 	12.34
+		new KNumber(numStr5, KNumber.LOCALE_IT, KNumber.$_$$0_0):      		.getDouble() 	--> 	12.34
+		new KNumber(numStr5, KNumber.LOCALE_IT, KNumber.$_$$0_00_P):   		.getDouble() 	--> 	12.34
+		
+	>>> E' possibile impostare un prefisso e un suffisso, sia tramite metodi set che impostandolo nel pattern:
+	
+		KNumber nm1 = new KNumber(numDouble, KNumber.Formato.IMP2);
+		nm1.setPrefix("(");
+		nm1.setSuffix(")");
+		
+		KNumber nm2 = new KNumber(numDouble2, KNumber.Formato.PERC2_00);
+		nm2.setPrefix("(");
+		nm2.setSuffix(")");	
+		
+		nm1:          														.toString() 	--> 	(123.456.789,68)
+		nm2:     															.toString() 	--> 	(12,34 %)
+		new KNumber(numStr1, "'('"+KNumber.$_$$0_00+"')'"):                	.toString() 	--> 	(123.456.789,68)
+		new KNumber(numStr5, LOCALE_IT, "'('#,##0.00' %)'")					.toString() 	--> 	(12,34 %)
+		
+	>>> Nel caso vi siano più numeri che hanno le stesse configurazioni, è possibile passare ai costruttori
+	>>> un oggetto KNumber_Params definito una volta sola:
+	
+		KNumber_Params params = new KNumber_Params(KNumber.$_$$0_00, "N.D.");
+		
+		new KNumber(numInt, params):             							.toString() 	--> 	1.234.567.890,00
+		new KNumber(numLong, params):            							.toString() 	--> 	123.456.789.012.345,00
+		new KNumber(numDouble, params):          							.toString() 	--> 	123.456.789,68
+		new KNumber(numDouble2, params):         							.toString() 	--> 	12,34
+		new KNumber(Double.NaN, params):     								.toString() 	--> 	N.D.
+		new KNumber(numBD, params):              							.toString() 	--> 	123.456.789.012.345,68	
+		new KNumber(numStr1, params):            							.toString() 	--> 	123.456.789,68
+		new KNumber("xyz", params):     										.toString() 	--> 	xyz
+		
+		
+		

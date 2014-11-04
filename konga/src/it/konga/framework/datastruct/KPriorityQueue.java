@@ -3,6 +3,7 @@ package it.konga.framework.datastruct;
 import it.konga.framework.interfaces.Ptr_Function_Compare;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 
 // ATTENZIONE: non utilizzo l'indice 0 \\
@@ -11,11 +12,11 @@ import java.util.ArrayList;
  * Coda Prioritaria
  * @author Giampaolo Saporito
  */
-public class KPriorityQueue<T>
+public class KPriorityQueue<T> // implements Iterable<T>
 {
 	// ------------------------------------------------------------------------- fields ------------------------------------------------------------------------- \\
-	private ArrayList<T> _v;
-	private Ptr_Function_Compare<T> _compare;
+	protected ArrayList<T> _v;
+	protected Ptr_Function_Compare<T> _compare;
 	
 	// ------------------------------------------------------------------------- costruttori ------------------------------------------------------------------------- \\
 	/**
@@ -52,6 +53,9 @@ public class KPriorityQueue<T>
 		}
 		return temp;
 	}
+	// -------------------------------------------------------------------------- interfaces -------------------------------------------------------------------------- \\
+//	@Override
+//	public Iterator<T> iterator() 								{ return new KPriorityQueueIterator<T>(this); }
 	
 	// ------------------------------------------------------------------------- metodi privati ------------------------------------------------------------------------- \\
 	private void walkUp(int i)
@@ -134,5 +138,6 @@ public class KPriorityQueue<T>
 		}
 		return true;
 	}
+	
 	
 } //EO class KPriorityQueue

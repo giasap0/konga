@@ -1,12 +1,17 @@
 package it.konga.framework.datastruct;
 
+import java.security.InvalidParameterException;
+
 
 /**
  * tipo arrayList ma con più metodi
  * @author Giampaolo Saporito
  */
+@SuppressWarnings("unchecked")
 public class KVector<T>
 {
+	
+	//TODO finire implementazione
 
 	// ------------------------------------------------------------------------- fields ------------------------------------------------------------------------- \\
 	protected Object[] _v;
@@ -16,6 +21,7 @@ public class KVector<T>
 	public KVector()				{_v = new Object[10]; _size=0;}
 	public KVector(int capacity )	{_v = new Object[capacity];	_size = 0; }
 
+	/** costruisce un vettore di size 'size' con tutti gli elementi assegnati al valore 'value' */
 	public KVector(int size, T value)
 	{
 		_v = new Object[size];
@@ -40,8 +46,9 @@ public class KVector<T>
 
 	// ------------------------------------------------------------------------- metodi publici ------------------------------------------------------------------------- \\
 	public int capacity()								{return _v.length;}
+	public int size()									{return _size;}
 
-	/** se newSize > size aumenta la capacity */
+	/** se newSize > size aumenta la capacity, altrimenti taglia via tutti gli elementi in più */
 	public void resize(int newSize)
 	{
 		if(newSize ==_size)
@@ -67,8 +74,8 @@ public class KVector<T>
 		_size = maxIndex;
 	}
 	
-	/** insert value at last position */
-	public void	append(T value)
+	/** insert value at last position<br>return this */
+	public KVector<T> append(T value)
 	{
 		if(_size==0)
 		{
@@ -79,7 +86,7 @@ public class KVector<T>
 			//se sono qui il size è 0 ma la capacità è più alta
 			_v[0] = value;
 			++_size;
-			return;
+			return this;
 		}
 		//il problema è se la capacity è uguale al size, questo non deve mai succedere
 		if( capacity() == _size)
@@ -88,25 +95,104 @@ public class KVector<T>
 		}
 		_v[_size] = value;
 		++_size;
+		return this;
 	}
-}
+	
+	/** return ant reference to element in position i */
+	public T at(int i)												{return (T)_v[i];}
+	/** clear all the elements in the vector and resize it to 0 */
+	public void clear()												{_v = new Object[0];}
+	/** if value == null return false */
+	public boolean contains(T value)
+	{
+		if (_v.length == 0) return false;
+		if(value == null)	return false;
+		for (Object obj : _v)
+		{
+			T x = (T)obj;
+			if(value.equals(x))
+				return true;
+		}
+		return false;
+	}
+	/** return number of vector's elements with value==value.<br>if value == null return 0 */
+	public int count(T value)
+	{
+		if (_v.length == 0) return 0;
+		if(value == null)	return 0;
+		int count = 0;
+		for (Object obj : _v)
+		{
+			T x = (T)obj;
+			if(value.equals(x))
+				return ++count;
+		}
+		return count;
+	}
+	
+	public T first()										{return (T) _v[0];}
+	/** fill vector with value 'value'<br>return this */
+	public KVector<T> fill(T value)							{return fill(value,-1);}
+	/**fill the vector with value 'value' and if size!=-1 resize to size.<br>Return this */
+	public KVector<T> fill(T value, int size)
+	{
+		if(size<0)
+			size = _size;
+		this.resize(size);
+		for(int i=0; i < _size; i++)
+		{
+			_v[i] = value;
+		}
+		return this;
+	}
+	
+	/** return position of element with value value. if it doesn't exists return -1 */
+	public int indexOf(T value)								{return indexOf(value,0);}
+	/** return position of element with value value. if it doesn't exists return -1 */
+	public int indexOf(T value, int from)
+	{
+		if( from >= _size )
+			throw new IndexOutOfBoundsException("KVector::indexOf - index out of bound - index value == "+from + " array size == "+_size);
+		if(value == null)
+			throw new InvalidParameterException("KVector::indexOf - invalid parameter 'value' == null");
+		for(int i=from; i < _size; i++)
+		{
+			T x = (T)_v[i];
+			if(value.equals(x))
+				return i;
+		}
+		return -1;
+	}
+	/** insert value in position = index.<br> KVector size++ */
+	public void insert(int index, T value)
+	{
+		int capacity = _v.length;
+		if(capacity<= _size)
+			resize(_size+10);
+		for(int i= _size+1; i>index;i--)
+		{
+			_v[i] = _v[i-1];
+		}
+		_v[index] = value;
+		++_size;
+	}
+	
+	public static void main(String[] args)
+	{
+		KVector<String> vct = new KVector<String>();
+		vct.append("ciao").append("sono").append("io");
+		vct.insert(1, "porcaloca");
+		for(int i=0; i < vct.size(); i++)
+		{
+			System.out.println(vct.at(i));
+		}
+		System.out.println("capacity = "+vct.capacity());
+		System.out.println("size = "+vct.size());
+	}
+	
+}//EO KVector<T>
 /*
-	//return ant reference to element in position i
-	T&		at(uint i) ;
 
-	//clear all the elements in the vector and resize it to 0
-	void			clear();	
-	bool			contains( T& value) ;
-	//return number of vector's elements with value==value
-	int				count( T& value) ;
-	//return pointer to the first element
-	T*				data();
-	//fill the vector with value value and if size!=-1 resize to size
-	GVector<T>&		fill( T& value, int size = -1);
-	//return reference to first element
-	T&				first();
-	//return position of element with value value. if it doesn't exists return -1
-	int				indexOf( T& value, uint from=0) ;
 	//insert value in position = index
 	void			insert(uint index,  T& value);
 	//insert number elements with value==value, starting from position index
@@ -155,52 +241,10 @@ protected:
 	std::vector<T> _v;
 };
 
-template<class T> GVector<T>::GVector(uint size) : _v(size)								{}
-template<class T> GVector<T>::GVector(uint size, const T& value) : _v(size,value)		{}
-template<class T> GVector<T>::GVector(const GVector& other) : _v(other.toStdVector())	{}
 
-template<class T> public const T& GVector<T>::at(uint i) const							{return _v.at(i);}
-template<class T> public int GVector<T>::capacity() const								{return _v.capacity();}
-template<class T> public void GVector<T>::clear()										{_v.clear();}
-template<class T> public bool GVector<T>::contains(const T& value) const
-{
-	for (uint i=0; i<_v.size(); i++)
-	{
-		if(_v.at(i)==value)
-			return true;
-	}
-	return false;
-}
-template<class T> public int GVector<T>::count(const T& value) const
-{
-	int n=0;
-	for(uint i=0; i<_v.size(); i++)
-	{
-		if(_v.at(i)==value)
-			n++
-	}
-	return n;
-}
-template<class T> public T* GVector<T>::data() {return _v.data();}
-template<class T> public GVector<T>& GVector<T>::fill(const T& value, int size)
-{
-	if(size<0)
-		size = _v.size();
-	_v.assign(size,value);
-	return *this;
-}
-template<class T> public T& GVector<T>::first() {return _v.front();}
-template<class T> public int GVector<T>::indexOf(const T& value, uint from) const
-{
-	if(from>=_v.size())
-		return -1;
-	for(int i=from; i<_v.size(); i++)
-	{
-		if(_v.at(i) == value)
-			return i;
-	}
-	return -1;
-}
+
+
+
 template<class T> public void GVector<T>::insert(uint index, const T& value)	{_v.insert(_v.begin()+index,value);}
 template<class T> public void GVector<T>::insert(uint index, uint number, const T& value)
 {

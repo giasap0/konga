@@ -10,7 +10,6 @@ import java.security.InvalidParameterException;
 @SuppressWarnings("unchecked")
 public class KVector<T>
 {
-	
 	//TODO finire implementazione
 
 	// ------------------------------------------------------------------------- fields ------------------------------------------------------------------------- \\
@@ -59,7 +58,6 @@ public class KVector<T>
 			_size = 0;
 			return;
 		}
-
 		Object[] temp = _v;
 		_v = new Object[newSize];
 		int maxIndex = 0;
@@ -101,7 +99,7 @@ public class KVector<T>
 	/** return ant reference to element in position i */
 	public T at(int i)												{return (T)_v[i];}
 	/** clear all the elements in the vector and resize it to 0 */
-	public void clear()												{_v = new Object[0];}
+	public void clear()												{_v = new Object[0]; _size=0;}
 	/** if value == null return false */
 	public boolean contains(T value)
 	{
@@ -166,10 +164,12 @@ public class KVector<T>
 	/** insert value in position = index.<br> KVector size++ */
 	public void insert(int index, T value)
 	{
+		if( index < 0 || index > _size)
+			throw new IndexOutOfBoundsException("KVector::indexOf - index out of bound - index value == "+index + " array size == "+_size);
 		int capacity = _v.length;
 		if(capacity<= _size)
 			resize(_size+10);
-		for(int i= _size+1; i>index;i--)
+		for(int i= _size+1; i>index;i--) //sposto tutti gli elementi successivi ad index a destra
 		{
 			_v[i] = _v[i-1];
 		}
@@ -177,11 +177,45 @@ public class KVector<T>
 		++_size;
 	}
 	
+	/**
+	 * inserisce 'number' elemti con valore == value, partendo dall'indice 'index'
+	 * @param index indice da cui cominciare l'inserimento
+	 * @param number numero di elementi da inserire. Deve essere > 0
+	 * @param value valore dei nuovi elementi
+	 */
+	public void insert(int index, int number, T value)
+	{
+		if( index < 0 || index > _size)
+			throw new IndexOutOfBoundsException("KVector::indexOf - index out of bound - index value == "+index + " array size == "+_size);
+		if(number<=0)
+			throw new InvalidParameterException("KVector::indexOf - invalid parameter 'number' == "+number +" , expected > 0");
+		int capacity = _v.length;
+		if(capacity< _size+number+1)
+		{
+//			Object[] temp = _v;
+//			_v = new Object[_size+number+1];
+//			for(int i=0; i < temp.length; i++){
+//				_v[i] = temp[i];
+//			}
+			resize(_size+number+1);
+		}
+		int newSize = _size+number;
+		for(int i=newSize-1; i>= index+number; i--) //sposto a destra gli elementi
+		{
+			_v[i] = _v[i-number];
+		}
+		for(int i=index; i < index+number; i++) //valorizzo i posti lasciati vuoti
+		{
+			_v[i] = value;
+		}
+		_size = newSize;
+	}
+	
 	public static void main(String[] args)
 	{
 		KVector<String> vct = new KVector<String>();
 		vct.append("ciao").append("sono").append("io");
-		vct.insert(1, "porcaloca");
+		vct.insert(1,8, "insert");
 		for(int i=0; i < vct.size(); i++)
 		{
 			System.out.println(vct.at(i));
@@ -192,9 +226,6 @@ public class KVector<T>
 	
 }//EO KVector<T>
 /*
-
-	//insert value in position = index
-	void			insert(uint index,  T& value);
 	//insert number elements with value==value, starting from position index
 	void			insert(uint index, uint number,  T& value);
 	//true if ther's no elements
@@ -241,16 +272,6 @@ protected:
 	std::vector<T> _v;
 };
 
-
-
-
-
-template<class T> public void GVector<T>::insert(uint index, const T& value)	{_v.insert(_v.begin()+index,value);}
-template<class T> public void GVector<T>::insert(uint index, uint number, const T& value)
-{
-	_v.reserve(_v.size()+number);
-	_v.insert(_v.begin()+index,number,value);
-}
 template<class T> public bool GVector<T>::isEmpty() const						{return _v.empty();}
 template<class T> public T& GVector<T>::last()									{return _v.back();}
 template<class T> public void GVector<T>::prepend(const T& value)				{_v.insert(_v.begin(),value);}
@@ -318,7 +339,6 @@ template<class T> public const T&	 GVector<T>::operator[](uint indx) const			{re
 
 template<class T> public GVector<T> GVector<T>::fromSTDVector(const std::vector<T>& v) {GVector<T> x; x._v=v; return x;}
 
-
-
-
  */
+
+

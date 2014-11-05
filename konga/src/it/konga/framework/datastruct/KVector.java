@@ -58,7 +58,7 @@ public class KVector<T>
 			return;
 		if(newSize<=0)
 		{
-			_v = new Object[10];
+			_v = new Object[0];
 			_size = 0;
 			return;
 		}
@@ -100,10 +100,10 @@ public class KVector<T>
 		return this;
 	}
 	
-	/** return ant reference to element in position i */
+	/**torna la reference all'elemento in posizione i<br>Gli indici partono da 0*/
 	public T at(int i)												{return (T)_v[i];}
-	/** clear all the elements in the vector and resize it to 0 */
-	public void clear()												{_v = new Object[0]; _size=0;}
+	/**cancella tutti gli elementi nel vettore e fa un resize a 0.<br>*/
+	public void clear()												{resize(0);}
 	/** if value == null return false */
 	public boolean contains(T value)
 	{
@@ -131,16 +131,18 @@ public class KVector<T>
 		}
 		return count;
 	}
-	
-	public T first()										{return (T) _v[0];}
-	/** fill vector with value 'value'<br>return this */
+	/** elemento all'indice 0 */
+	public T first()										{if(capacity()==0) return null; return (T) _v[0];}
+	/**riempie il vettore con valori == 'value'.<br>Torna this */
 	public KVector<T> fill(T value)							{return fill(value,-1);}
-	/**fill the vector with value 'value' and if size!=-1 resize to size.<br>Return this */
+	/**riempie il vettore con valori == 'value' e se il size è != -1 fa il resize.<br>Torna this */
 	public KVector<T> fill(T value, int size)
 	{
 		if(size<0)
 			size = _size;
 		this.resize(size);
+		if(size==0)
+			return this;
 		for(int i=0; i < _size; i++)
 		{
 			_v[i] = value;
@@ -148,13 +150,13 @@ public class KVector<T>
 		return this;
 	}
 	
-	/** return position of element with value value. if it doesn't exists return -1 */
+	/**torna la posizione dell'elemento con value.equals(value).<br>Se non esiste torna -1 */
 	public int indexOf(T value)								{return indexOf(value,0);}
-	/** return position of element with value value. if it doesn't exists return -1 */
+	/**torna la posizione dell'elemento con value.equals(value).<br>Se non esiste torna -1 */
 	public int indexOf(T value, int from)
 	{
-		if( from >= _size )
-			throw new IndexOutOfBoundsException("KVector::indexOf - index out of bound - index value == "+from + " array size == "+_size);
+		if( from >= _size || from <0)
+			throw new IndexOutOfBoundsException("KVector::indexOf - index out of bound - index value == "+from + " ,array size == "+_size);
 		if(value == null)
 			throw new InvalidParameterException("KVector::indexOf - invalid parameter 'value' == null");
 		for(int i=from; i < _size; i++)
@@ -165,7 +167,7 @@ public class KVector<T>
 		}
 		return -1;
 	}
-	/** insert value in position = index.<br> KVector size++ */
+	/** inserisce 'value' nella posizione 'index'.<br>Sposta a destra tutti i valori con indice successivo.<br>Causa resize. */
 	public void insert(int index, T value)
 	{
 		if( index < 0 || index > _size)

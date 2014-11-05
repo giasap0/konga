@@ -48,8 +48,20 @@ public class KVector<T>
 	}
 
 	// ------------------------------------------------------------------------- metodi publici ------------------------------------------------------------------------- \\
+	/** pool di memoria occupata */
 	public int capacity()								{return _v.length;}
+	/** numero di elementi nell'array */
 	public int size()									{return _size;}
+	/**torna la reference all'elemento in posizione i<br>Gli indici partono da 0*/
+	public T at(int i)												{return (T)_v[i];}
+	/**cancella tutti gli elementi nel vettore e fa un resize a 0.<br>*/
+	public void clear()												{resize(0);}
+	/** elemento all'indice 0 */
+	public T first()												{if(capacity()==0) return null; return (T) _v[0];}
+	/** reference all'ultimo lemento */
+	public T last()													{if(capacity()==0) return null; return (T)_v[_size-1];}
+	/** vero se non ci sono elementi */
+	public boolean isEmpty() 										{return _size<=0;}
 
 	/** se newSize > size aumenta la capacity, altrimenti taglia via tutti gli elementi in più */
 	public void resize(int newSize)
@@ -99,11 +111,7 @@ public class KVector<T>
 		++_size;
 		return this;
 	}
-	
-	/**torna la reference all'elemento in posizione i<br>Gli indici partono da 0*/
-	public T at(int i)												{return (T)_v[i];}
-	/**cancella tutti gli elementi nel vettore e fa un resize a 0.<br>*/
-	public void clear()												{resize(0);}
+
 	/** if value == null return false */
 	public boolean contains(T value)
 	{
@@ -131,8 +139,7 @@ public class KVector<T>
 		}
 		return count;
 	}
-	/** elemento all'indice 0 */
-	public T first()										{if(capacity()==0) return null; return (T) _v[0];}
+	
 	/**riempie il vettore con valori == 'value'.<br>Torna this */
 	public KVector<T> fill(T value)							{return fill(value,-1);}
 	/**riempie il vettore con valori == 'value' e se il size è != -1 fa il resize.<br>Torna this */
@@ -171,7 +178,7 @@ public class KVector<T>
 	public void insert(int index, T value)
 	{
 		if( index < 0 || index > _size)
-			throw new IndexOutOfBoundsException("KVector::indexOf - index out of bound - index value == "+index + " array size == "+_size);
+			throw new IndexOutOfBoundsException("KVector::insert - index out of bound - index value == "+index + " array size == "+_size);
 		int capacity = _v.length;
 		if(capacity<= _size)
 			resize(_size+10);
@@ -192,9 +199,9 @@ public class KVector<T>
 	public void insert(int index, int number, T value)
 	{
 		if( index < 0 || index > _size)
-			throw new IndexOutOfBoundsException("KVector::indexOf - index out of bound - index value == "+index + " array size == "+_size);
+			throw new IndexOutOfBoundsException("KVector::inser - index out of bound - index value == "+index + " array size == "+_size);
 		if(number<=0)
-			throw new InvalidParameterException("KVector::indexOf - invalid parameter 'number' == "+number +" , expected > 0");
+			throw new InvalidParameterException("KVector::insert - invalid parameter 'number' == "+number +" , expected > 0");
 		int capacity = _v.length;
 		int newSize = _size+number;
 		if(capacity< newSize)
@@ -211,12 +218,43 @@ public class KVector<T>
 		}
 		_size = newSize;
 	}
+	/** inserisce un nuovo elemento alla posizione 0 dell'array.<br>Shifta tutti gli altri elementi a destra */
+	public void prepend( T value)								{this.insert(0, value);}
+	/** rimuove l'elemento all'indice atIndex */
+	public void remove(int atIndex)
+	{
+		if( atIndex < 0 || atIndex > _size)
+			throw new IndexOutOfBoundsException("KVector::remove - index out of bound - index value == "+atIndex + " array size == "+_size);
+		for(int i=atIndex; i < _size; i++){
+			_v[i] = _v[i+1];
+		}
+		_v[_size-1] = null;
+		--_size;
+	}
+	
+	/**rimuove 'number' di elementi partendo dall'indice 'adIndex'(incluso).<br>Causa il resize */
+	public void remove(int atIndex, int number)
+	{
+		if( atIndex < 0 || atIndex >= _size)
+			throw new IndexOutOfBoundsException("KVector::remove - index out of bound - index value == "+atIndex + " array size == "+_size);
+		if(number<=0)
+			throw new InvalidParameterException("KVector::remove - invalid parameter 'number' == "+number +" , expected > 0");
+		if(atIndex+number> _size)
+			number = _size-atIndex;
+		
+		for(int i = atIndex+number; i < _size; i++){
+			_v[i-number] = _v[i];	//copio a sinistra i valori da mantenere
+		}
+		this.resize(_size-number); //butto via tutto l'avanzo
+	}
 	
 	public static void main(String[] args)
 	{
 		KVector<String> vct = new KVector<String>();
-		vct.append("ciao").append("sono").append("io");
-		vct.insert(1,8, "insert");
+		vct.append("ciao").append("sono").append("io").append("cane").append("gatto").append("k").append("p").append("ou").append("mi").append("azz");
+		System.out.println("capacity = "+vct.capacity());
+		System.out.println("size = "+vct.size());
+		vct.remove(2,15);
 		for(int i=0; i < vct.size(); i++)
 		{
 			System.out.println(vct.at(i));
@@ -224,23 +262,10 @@ public class KVector<T>
 		System.out.println("capacity = "+vct.capacity());
 		System.out.println("size = "+vct.size());
 	}
-	
 }//EO KVector<T>
 /*
-	//insert number elements with value==value, starting from position index
-	void			insert(uint index, uint number,  T& value);
-	//true if ther's no elements
-	bool			isEmpty() ;
-	//reference to last element
-	T&				last();
-	//the maximum potential size due to system
-	public uint		max_size()							{return _v.max_size();}
-	//insert element with value value at position 0
-	void			prepend( T& value);
-	//remove element at index==atIndx and resize vector to size-1
-	void			remove(uint atIndx);
-	//remove number of lemenets starting from index atIndex (included), also resize vector
-	void			remove(uint atIndx, uint number);
+
+	
 	void			replace(uint atIndx,  T& value);
 	void			reserve(uint n);
 	//p_compare = a function pointer that return true if left<right
@@ -273,9 +298,7 @@ protected:
 	std::vector<T> _v;
 };
 
-template<class T> public bool GVector<T>::isEmpty() const						{return _v.empty();}
-template<class T> public T& GVector<T>::last()									{return _v.back();}
-template<class T> public void GVector<T>::prepend(const T& value)				{_v.insert(_v.begin(),value);}
+
 template<class T> public void GVector<T>::remove(uint atIndx)					{_v.erase(_v.begin()+atIndx);}
 template<class T> public void GVector<T>::remove(uint atIndx, uint number)		{_v.erase(_v.begin()+atIndx,_v.begin()+atIndx+number);}
 template<class T> public void GVector<T>::replace(uint atIndx, const T& value)	{_v[atIndx]=value;}

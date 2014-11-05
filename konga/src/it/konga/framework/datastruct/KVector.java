@@ -1,5 +1,8 @@
 package it.konga.framework.datastruct;
 
+import it.konga.framework.interfaces.Ptr_Function_Compare;
+import it.konga.framework.util.Compare_Integers;
+
 import java.security.InvalidParameterException;
 
 
@@ -49,9 +52,9 @@ public class KVector<T>
 
 	// ------------------------------------------------------------------------- metodi publici ------------------------------------------------------------------------- \\
 	/** pool di memoria occupata */
-	public int capacity()								{return _v.length;}
+	public int capacity()											{return _v.length;}
 	/** numero di elementi nell'array */
-	public int size()									{return _size;}
+	public int size()												{return _size;}
 	/**torna la reference all'elemento in posizione i<br>Gli indici partono da 0*/
 	public T at(int i)												{return (T)_v[i];}
 	/**cancella tutti gli elementi nel vettore e fa un resize a 0.<br>*/
@@ -62,12 +65,14 @@ public class KVector<T>
 	public T last()													{if(capacity()==0) return null; return (T)_v[_size-1];}
 	/** vero se non ci sono elementi */
 	public boolean isEmpty() 										{return _size<=0;}
+	/** riserva la memoria per aggiungere n elementi */
+	public void reserve(int n)										{this.resize(_size+n);}
+	/**release extra memory: make capacity == size */
+	public void squeeze ()											{this.resize(_size);}
 
 	/** se newSize > size aumenta la capacity, altrimenti taglia via tutti gli elementi in più */
 	public void resize(int newSize)
 	{
-		if(newSize ==_size)
-			return;
 		if(newSize<=0)
 		{
 			_v = new Object[0];
@@ -77,7 +82,7 @@ public class KVector<T>
 		Object[] temp = _v;
 		this._v = new Object[newSize];
 		int maxIndex = 0;
-		if(_size <= newSize)
+		if(_size < newSize)
 			maxIndex = _size;
 		else //lo sto rimpicciolendo
 			maxIndex = newSize;
@@ -102,7 +107,7 @@ public class KVector<T>
 			++_size;
 			return this;
 		}
-		//il problema è se la capacity è uguale al size, questo non deve mai succedere
+		//se capicity == size mi riservo altra memoria
 		if( capacity() == _size)
 		{
 			resize(_size+10);
@@ -248,13 +253,33 @@ public class KVector<T>
 		this.resize(_size-number); //butto via tutto l'avanzo
 	}
 	
+	public void replace(int atIndx, T value)
+	{
+		if( atIndx < 0 || atIndx >= _size)
+			throw new IndexOutOfBoundsException("KVector::replace - index out of bound - index value == "+atIndx + " array size == "+_size);
+		_v[atIndx] = value;
+	}
+	
+	/** ordina l'array in modo crescente (dal più piccolo al più grande) utilizzando la funzione compare in input.<br>(bubble sort) */
+	public void sort( Ptr_Function_Compare<T> p_compare )
+	{
+		for(int i = 0; i<_size-1; i++){
+			for(int j = 0; j<_size-1-i; j++){
+				T temp = (T) _v[j];
+				T prox = (T)_v[j+1];
+				if(p_compare.compare(temp, prox)> 0){
+			          _v[j] = _v[j+1];
+			          _v[j+1] = temp;
+			     }
+			 }
+		}
+	}
+	
 	public static void main(String[] args)
 	{
-		KVector<String> vct = new KVector<String>();
-		vct.append("ciao").append("sono").append("io").append("cane").append("gatto").append("k").append("p").append("ou").append("mi").append("azz");
-		System.out.println("capacity = "+vct.capacity());
-		System.out.println("size = "+vct.size());
-		vct.remove(2,15);
+		KVector<Integer> vct = new KVector<Integer>();
+		vct.append(1).append(2).append(3).append(5).append(4).append(8).append(6).append(10).append(7).append(-1).append(7);
+		vct.sort(new Compare_Integers() );
 		for(int i=0; i < vct.size(); i++)
 		{
 			System.out.println(vct.at(i));
@@ -264,15 +289,8 @@ public class KVector<T>
 	}
 }//EO KVector<T>
 /*
-
 	
-	void			replace(uint atIndx,  T& value);
-	void			reserve(uint n);
-	//p_compare = a function pointer that return true if left<right
-	public void		sort(bool(*p_compare)(T,T))			{std::sort(_v.begin(),_v.end(),p_compare);}
-	uint			size() ;
-	//release extra memory: TRY TO make capacity == size
-	void			squeeze ();
+	
 	void			swap ( GVector<T> & other );
 	std::vector<T>	toStdVector () ;
 	//return the value of the element in position atIndx. if indx is not valid return default uction

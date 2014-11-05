@@ -4,7 +4,6 @@ import it.konga.framework.interfaces.Ptr_Function_Compare;
 
 import java.io.Serializable;
 import java.security.InvalidParameterException;
-import java.util.Iterator;
 import java.util.List;
 
 

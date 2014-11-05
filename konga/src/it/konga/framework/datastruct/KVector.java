@@ -17,8 +17,12 @@ public class KVector<T>
 	private int _size;
 
 	// ------------------------------------------------------------------------- costruttori ------------------------------------------------------------------------- \\
-	public KVector()				{_v = new Object[10]; _size=0;}
-	public KVector(int capacity )	{_v = new Object[capacity];	_size = 0; }
+	public KVector()				{this(10);}
+	public KVector(int capacity )
+	{
+		_size = 0;
+		_v = new Object[capacity];
+	}
 
 	/** costruisce un vettore di size 'size' con tutti gli elementi assegnati al valore 'value' */
 	public KVector(int size, T value)
@@ -59,10 +63,10 @@ public class KVector<T>
 			return;
 		}
 		Object[] temp = _v;
-		_v = new Object[newSize];
+		this._v = new Object[newSize];
 		int maxIndex = 0;
-		if(temp.length <= newSize)
-			maxIndex = temp.length;
+		if(_size <= newSize)
+			maxIndex = _size;
 		else //lo sto rimpicciolendo
 			maxIndex = newSize;
 		for(int i=0; i < maxIndex; i++)
@@ -190,16 +194,11 @@ public class KVector<T>
 		if(number<=0)
 			throw new InvalidParameterException("KVector::indexOf - invalid parameter 'number' == "+number +" , expected > 0");
 		int capacity = _v.length;
-		if(capacity< _size+number+1)
-		{
-//			Object[] temp = _v;
-//			_v = new Object[_size+number+1];
-//			for(int i=0; i < temp.length; i++){
-//				_v[i] = temp[i];
-//			}
-			resize(_size+number+1);
-		}
 		int newSize = _size+number;
+		if(capacity< newSize)
+		{
+			resize(newSize);
+		}		
 		for(int i=newSize-1; i>= index+number; i--) //sposto a destra gli elementi
 		{
 			_v[i] = _v[i-number];

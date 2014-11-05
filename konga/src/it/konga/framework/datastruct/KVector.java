@@ -1,9 +1,11 @@
 package it.konga.framework.datastruct;
 
 import it.konga.framework.interfaces.Ptr_Function_Compare;
-import it.konga.framework.util.Compare_Integers;
 
+import java.io.Serializable;
 import java.security.InvalidParameterException;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -11,10 +13,9 @@ import java.security.InvalidParameterException;
  * @author Giampaolo Saporito
  */
 @SuppressWarnings("unchecked")
-public class KVector<T>
+public class KVector<T> implements Serializable, Iterable<T>
 {
-	//TODO finire implementazione
-
+	private static final long serialVersionUID = -5316121059953715244L;
 	// ------------------------------------------------------------------------- fields ------------------------------------------------------------------------- \\
 	protected Object[] _v;
 	private int _size;
@@ -49,14 +50,20 @@ public class KVector<T>
 		}
 		_size = _v.length;
 	}
+	public KVector(KVector<T> other)
+	{
+		 _size = other._size;
+		 _v = new Object[other._v.length];
+		 for(int i=0; i < _v.length; i++){
+			 _v[i] = other._v[i];
+		 }
+	}
 
 	// ------------------------------------------------------------------------- metodi publici ------------------------------------------------------------------------- \\
 	/** pool di memoria occupata */
 	public int capacity()											{return _v.length;}
 	/** numero di elementi nell'array */
 	public int size()												{return _size;}
-	/**torna la reference all'elemento in posizione i<br>Gli indici partono da 0*/
-	public T at(int i)												{return (T)_v[i];}
 	/**cancella tutti gli elementi nel vettore e fa un resize a 0.<br>*/
 	public void clear()												{resize(0);}
 	/** elemento all'indice 0 */
@@ -69,6 +76,13 @@ public class KVector<T>
 	public void reserve(int n)										{this.resize(_size+n);}
 	/**release extra memory: make capacity == size */
 	public void squeeze ()											{this.resize(_size);}
+	/**torna la reference all'elemento in posizione i<br>Gli indici partono da 0*/
+	public T at(int i)
+	{
+		if(i <0 || i >= _size )
+			throw new IndexOutOfBoundsException("KVector::at - index out of bound - index value == "+i + " ,array size == "+_size);
+		return (T)_v[i];
+	}
 
 	/** se newSize > size aumenta la capacity, altrimenti taglia via tutti gli elementi in più */
 	public void resize(int newSize)
@@ -275,112 +289,34 @@ public class KVector<T>
 		}
 	}
 	
-	public static void main(String[] args)
+	public void swap(KVector<T> other)
 	{
-		KVector<Integer> vct = new KVector<Integer>();
-		vct.append(1).append(2).append(3).append(5).append(4).append(8).append(6).append(10).append(7).append(-1).append(7);
-		vct.sort(new Compare_Integers() );
-		for(int i=0; i < vct.size(); i++)
-		{
-			System.out.println(vct.at(i));
-		}
-		System.out.println("capacity = "+vct.capacity());
-		System.out.println("size = "+vct.size());
+		Object[] temp = _v;
+		int thisSize = _size;
+		_size = other._size;
+		_v = other._v;
+		other._v = temp;
+		other._size = thisSize;
 	}
-}//EO KVector<T>
-/*
 	
-	
-	void			swap ( GVector<T> & other );
-	std::vector<T>	toStdVector () ;
-	//return the value of the element in position atIndx. if indx is not valid return default uction
-	T				value ( uint atIndx ) ;
-	//return the value of the element in position atIndx, if indx is not valid return defaultValue
-	T				value ( uint atIndx,  T & defaultValue ) ;
-
-	//return reference to element at position indx
-	public T at(int indx) {}
-
 	// ------------------------------------------------------------------------- publici statici ------------------------------------------------------------------------- \\
 
-	public static<E> KVector<E> fromSTDVector( T[] v);
-
-	// ------------------------------------------------------------------------- metodi privati ------------------------------------------------------------------------- \\
-
-}
-
-
-/*
-
-protected:
-	std::vector<T> _v;
-};
-
-
-template<class T> public void GVector<T>::remove(uint atIndx)					{_v.erase(_v.begin()+atIndx);}
-template<class T> public void GVector<T>::remove(uint atIndx, uint number)		{_v.erase(_v.begin()+atIndx,_v.begin()+atIndx+number);}
-template<class T> public void GVector<T>::replace(uint atIndx, const T& value)	{_v[atIndx]=value;}
-template<class T> public void GVector<T>::reserve(uint n)						{_v.reserve(n);}
-template<class T> public void GVector<T>::resize(uint newSize)					{_v.resize(newSize);}
-template<class T> public uint GVector<T>::size() const							{return _v.size();}
-template<class T> public void GVector<T>::squeeze()								{_v.shrink_to_fit();}
-template<class T> public void GVector<T>::swap(GVector<T>& other)				{_v.swap(other._v);}
-template<class T> public std::vector<T> GVector<T>::toStdVector () const		{return _v;}
-template<class T> public T GVector<T>::value(uint atIndx) const
-{
-	if(atIndx<_v.size())
-		return _v.at(atIndx);
-	return T();
-}
-template<class T> public T GVector<T>::value(uint atIndx,const T& defaultValue) const
-{
-	if(atIndx<_v.size())
-		return _v.at(atIndx);
-	return defaultValue;
-}
-
-template<class T> public GVector<T>& GVector<T>::operator=(const GVector<T>& other)
-{
-	if(*this==other)
-		return *this;
-	_v = other._v;
-	return *this;
-}
-template<class T> public bool GVector<T>::operator==(const GVector<T>& other) const {return _v==other._v;}
-template<class T> public bool GVector<T>::operator!=(const GVector<T>& other) const {return _v!=other._v;}
-template<class T> public GVector<T> GVector<T>::operator+(const GVector<T>& other) const
-{
-	GVector<T> res(_v);
-	uint vSize = _v.size();
-	uint newSize = vSize+other.size();
-	res.reserve(newSize);
-	for(uint i=vSize; i<newSize; i++)
+	public static<T> KVector<T> fromList( List<T> list )
 	{
-		res.append(other.at(i-vSize));
+		KVector<T> v = new KVector<T>(list.size());
+		for(int i=0; i < list.size(); i++)
+			v.append(list.get(i));
+		return v;
 	}
-	return res;
-}
-template<class T> public GVector<T>& GVector<T>::operator+=(const GVector<T>& other) 
-{
-	uint vSize = _v.size();
-	uint newSize = vSize+other.size();
-	reserve(newSize);
-	for(uint i=vSize; i<newSize; i++)
+	
+	// ------------------------------------------------------------------------- Interfacce ------------------------------------------------------------------------- \\
+	@Override
+	public KVectorIterator<T> iterator()
 	{
-		append(other.at(i-vSize));
+		return new KVectorIterator<T>(this);
 	}
-	return *this;
-}
-template<class T> public GVector<T>& GVector<T>::operator+=(const T& value)				{append(value); return *this;}
-template<class T> public GVector<T>& GVector<T>::operator<<(const GVector<T>& other)	{return this->operator+=(other);}
-template<class T> public GVector<T>& GVector<T>::operator<<(const T& value)				{return this->operator+=(T);}
-template<class T> public T&			 GVector<T>::operator[](uint indx)					{return _v[indx];}
-template<class T> public const T&	 GVector<T>::operator[](uint indx) const			{return _v[indx];}
+	
+}//EO KVector<T>
 
-	//static members
-
-template<class T> public GVector<T> GVector<T>::fromSTDVector(const std::vector<T>& v) {GVector<T> x; x._v=v; return x;}
-
- */
 
 

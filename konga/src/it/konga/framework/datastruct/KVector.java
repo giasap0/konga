@@ -4,6 +4,9 @@ import it.konga.framework.interfaces.Ptr_Function_Compare;
 
 import java.io.Serializable;
 import java.security.InvalidParameterException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -56,6 +59,20 @@ public class KVector<T> implements Serializable, Iterable<T>
 		 for(int i=0; i < _v.length; i++){
 			 _v[i] = other._v[i];
 		 }
+	}
+	public KVector(Collection<? extends T> list)
+	{
+		if(list == null || list.size() == 0)
+		{
+			_size = 0;
+			_v = new Object[10];
+		}
+		else
+		{
+			_v = new Object[list.size()];
+			append(list);
+		}
+		
 	}
 
 	// ------------------------------------------------------------------------- metodi publici ------------------------------------------------------------------------- \\
@@ -127,6 +144,29 @@ public class KVector<T> implements Serializable, Iterable<T>
 		}
 		_v[_size] = value;
 		++_size;
+		return this;
+	}
+	/** insert values at last position<br>return this */
+	public KVector<T> append(KVector<? extends T> other)
+	{
+		if(other == null || other._size <= 0)
+			return this;
+		this.reserve(other._size);
+		for(int i=0; i < other.size(); i++)
+			this.append(other.at(i));
+		return this;
+	}
+	
+	public KVector<T> append(Collection<? extends T> list)
+	{
+		if(list == null || list.size() == 0)
+			return this;
+		this.reserve(list.size());
+		Iterator<? extends T> itr = list.iterator();
+		while(itr.hasNext())
+		{
+			this.append(itr.next());
+		}
 		return this;
 	}
 
@@ -239,15 +279,20 @@ public class KVector<T> implements Serializable, Iterable<T>
 	/** inserisce un nuovo elemento alla posizione 0 dell'array.<br>Shifta tutti gli altri elementi a destra */
 	public void prepend( T value)								{this.insert(0, value);}
 	/** rimuove l'elemento all'indice atIndex */
-	public void remove(int atIndex)
+	public T remove(int atIndex)
 	{
 		if( atIndex < 0 || atIndex > _size)
 			throw new IndexOutOfBoundsException("KVector::remove - index out of bound - index value == "+atIndex + " array size == "+_size);
-		for(int i=atIndex; i < _size; i++){
+		T ret = null;
+		for(int i=atIndex; i < _size; i++)
+		{
+			if( i== atIndex)
+				ret = (T) _v[atIndex];
 			_v[i] = _v[i+1];
 		}
 		_v[_size-1] = null;
 		--_size;
+		return ret;
 	}
 	
 	/**rimuove 'number' di elementi partendo dall'indice 'adIndex'(incluso).<br>Causa il resize */
@@ -287,7 +332,7 @@ public class KVector<T> implements Serializable, Iterable<T>
 			 }
 		}
 	}
-	
+	/** scambia i vettori */
 	public void swap(KVector<T> other)
 	{
 		Object[] temp = _v;
@@ -298,22 +343,46 @@ public class KVector<T> implements Serializable, Iterable<T>
 		other._size = thisSize;
 	}
 	
-	// ------------------------------------------------------------------------- publici statici ------------------------------------------------------------------------- \\
-
-	public static<T> KVector<T> fromList( List<T> list )
-	{
-		KVector<T> v = new KVector<T>(list.size());
-		for(int i=0; i < list.size(); i++)
-			v.append(list.get(i));
-		return v;
+	// ------------------------------------------------------------------------- override di Object ------------------------------------------------------------------------- \\
+	
+	@Override
+	public int hashCode() {
+		return 31 * 1 + Arrays.hashCode(_v);
 	}
 	
-	// ------------------------------------------------------------------------- Interfacce ------------------------------------------------------------------------- \\
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		KVector<T> other = (KVector<T>) obj;
+		if (!Arrays.equals(_v, other._v)) {
+			return false;
+		}
+		return true;
+	}
+	
+	// ------------------------------------------------------------------------- publici statici ------------------------------------------------------------------------- \\
+
+	
+	public static<T> KVector<T> fromList( List<T> list )
+	{
+		return new KVector<T>(list);
+	}
+	
+	// ------------------------------------------------------------------------- Interfacce - Iterable ------------------------------------------------------------------------- \\
 	@Override
 	public KVectorIterator<T> iterator()
 	{
 		return new KVectorIterator<T>(this);
 	}
+
 	
 }//EO KVector<T>
 

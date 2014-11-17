@@ -111,13 +111,12 @@ public class KListIterator<T> implements Iterator<T>
 		return "KListIterator on List with code " + _pList.hashCode();
 	}
 
-	/**
-	 * valore del nodo puntato
-	 */
+	/** valore del nodo puntato */
 	public T getData()					{if(_pNode== null) return null; return _pNode.getData();}
 	public boolean isValid()			{return _pNode != null;}
 	public void gotoBegin()				{if(_pList != null) _pNode= _pList._head;}
 	public void gotoEnd()				{if(_pList != null) _pNode = _pList._tail;}
+	/** mette i puntamenti a null */
 	public void clear()					{_pList = null; _pNode = null;}
 
 

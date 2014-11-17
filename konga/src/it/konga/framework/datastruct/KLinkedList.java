@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * lista semplicemente linkata. Usare ZListIterator per iterarla.
@@ -143,6 +145,19 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 			this.append(t);
 		}
 	}
+	public KLinkedList(Collection<? extends T> list)
+	{
+		if(list == null || list.size() == 0)
+		{
+			_count = 0;
+			_head=_tail=null;
+		}
+		else
+		{
+			append(list);
+		}
+		
+	}
 
 	// ----------------------------------------------------------------------------------- metodi publici ----------------------------------------------------------------------------------- \\
 
@@ -202,10 +217,10 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 	}
 
 	/**
-	 * appende un riferimento all'oggetto
+	 * appende un riferimento all'oggetto<br>return this
 	 * @param data
 	 */
-	public void append(T data)
+	public KLinkedList<T> append(T data)
 	{
 		if(_head == null)
 		{
@@ -218,13 +233,14 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 			_tail = _tail.next();
 		}
 		_count++;
+		return this;
 	}
 
 	/**
-	 * appende riferimenti agli elementi dell'altra lista
+	 * appende riferimenti agli elementi dell'altra lista<br> return this
 	 * @param other altra lista
 	 */
-	public void append( KLinkedList<T> other)
+	public KLinkedList<T> append( KLinkedList<T> other)
 	{
 		if(_head == null)
 		{
@@ -241,6 +257,22 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 			}
 			append( other._tail._data );
 		}
+		return this;
+	}
+	/**
+	 * appende riferimenti agli elementi dell'altra lista<br> return this
+	 * @param other altra lista
+	 */
+	public KLinkedList<T> append (Collection<? extends T> list)
+	{
+		if( list == null || list.size() == 0)
+			return this;
+		Iterator<? extends T> itr = list.iterator();
+		while( itr.hasNext() )
+		{
+			this.append( itr.next() );
+		}
+		return this;
 	}
 	/**
 	 * non fa una copia degli elementi ma punta agli stessi
@@ -450,7 +482,17 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		}
 		return null;
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	public T[] toArray()
+	{
+		Object[] array = new Object[_count];
+		KListIterator<T> itr = this.iterator();
+		int i =0;
+		while(itr.hasNext())
+			array[i++] = itr.next();	
+		return (T[]) array;
+	}
 
 	// ------------------------------------------------------------------------------------------ Private ------------------------------------------------------------------------------------------ \\
 

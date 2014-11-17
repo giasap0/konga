@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * classe base per i DTO.<br>
- * Utile sia come base gerarchica sia come lookUp per implementare la serializzazione
+ * Utile come gerarchica base
  * @author Giampaolo Saporito
  * @date 24-09-2014
  */
@@ -20,21 +20,6 @@ public abstract class KAbstract_Dto implements Serializable, ObjectInputValidati
 	}
 	public void setId(Integer id){
 		this.id = id;
-	}
-	
-	private void readObject(java.io.ObjectInputStream stream) throws java.io.IOException, ClassNotFoundException
-	{
-		stream.defaultReadObject();
-		setId(stream.readInt());
-		//setXXX( (cast) stream.readObject() );
-	}
-	
-	private void writeObject(java.io.ObjectOutputStream stream) throws java.io.IOException
-	{
-		//l'ordine in cui si legge e si scrive è lo stesso
-		stream.defaultWriteObject();
-		stream.writeInt( getId() );
-		//stream.writeObject( getXXX() );
 	}
 
 	@Override

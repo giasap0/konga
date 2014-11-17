@@ -1,11 +1,14 @@
 package it.konga.framework.flusso;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
@@ -28,5 +31,10 @@ public abstract class KBaseAction extends ActionSupport implements ServletRespon
 	  @Override
 	  public void setServletRequest(HttpServletRequest servletRequest) {
 	    this.servletRequest = servletRequest;
+	  }
+	  
+	  protected Map<String, Object> getSession()
+	  {
+		  return ActionContext.getContext().getSession();
 	  }
 }

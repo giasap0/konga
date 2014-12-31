@@ -7,7 +7,7 @@ public interface KList<T> extends Iterable<T>
 {
 	/** numero di elementi nella lista */
 	public int size();
-	/** return number of vector's elements with value.equals(value) */
+	/** return number of list's elements with value.equals(value) */
 	public int count(T value);
 	/**cancella tutti gli elementi nella lista*/
 	public void clear();

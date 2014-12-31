@@ -15,8 +15,10 @@ public class KDate_Params implements KFormat
 	public static final SimpleDateFormat YYYY  	= new SimpleDateFormat("yyyy", Locale.ITALIAN);
 	public static final SimpleDateFormat MM 	= new SimpleDateFormat("MM", Locale.ITALIAN);
 	public static final SimpleDateFormat DD 	= new SimpleDateFormat("dd", Locale.ITALIAN);
-	/*** giorno della settimana */
+	/** giorno della settimana , completo (lunedì, martedì)*/
 	public static final SimpleDateFormat EEEEE 	= new SimpleDateFormat("EEEEE", Locale.ITALIAN);
+	/** giorno della settimana abbreviato (es: domenica == dom) */
+	public static final SimpleDateFormat EEE = new SimpleDateFormat("EEE", Locale.ITALIAN);
 
 	public static final SimpleDateFormat MM_YYYY     = new SimpleDateFormat("MM.yyyy", Locale.ITALIAN);
 	public static final SimpleDateFormat MM_sl_YYYY  = new SimpleDateFormat("MM/yyyy", Locale.ITALIAN);
@@ -25,6 +27,7 @@ public class KDate_Params implements KFormat
 	public static final SimpleDateFormat MMM_YYYY    = new SimpleDateFormat("MMM yyyy", Locale.ITALIAN);
 	public static final SimpleDateFormat MMMMM_YYYY  = new SimpleDateFormat("MMMMM yyyy", Locale.ITALIAN);
 
+	public static final SimpleDateFormat DDMMYYYY 			= new SimpleDateFormat("ddMMyyyy", Locale.ITALIAN);
 	public static final SimpleDateFormat DD_MM_YYYY 		= new SimpleDateFormat("dd.MM.yyyy", Locale.ITALIAN);
 	public static final SimpleDateFormat DD_sl_MM_sl_YYYY 	= new SimpleDateFormat("dd/MM/yyyy", Locale.ITALIAN);
 
@@ -46,8 +49,7 @@ public class KDate_Params implements KFormat
 
 	private SimpleDateFormat patternInput = new SimpleDateFormat();	//utilizzato solo se Numero.valore e' String
 	private SimpleDateFormat patternOutput = DD_MM_YYYY;
-	private String undefined 	 = UNDEFINED_VALUE;
-
+	private String undefined = UNDEFINED_VALUE;
 
 	public KDate_Params(){
 

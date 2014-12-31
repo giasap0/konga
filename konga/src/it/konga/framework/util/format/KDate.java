@@ -14,7 +14,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 /**
  * Classe utile per formattare le date.<br>
  * Esistono vari pattern , fra i più comuni, come campi statici della classe KDate_Params
- * @author A28J
+ * @author Giampaolo Saporito
  *
  */
 public class KDate implements KFormat
@@ -27,9 +27,13 @@ public class KDate implements KFormat
 	private SimpleDateFormat		 patternOutput = KDate_Params.DD_MM_YYYY;
 	private String		 			 undefined 	   = UNDEFINED_VALUE;
 
-	// ---------------------------------------------------------------------------------- COSTRUTTORI ---------------------------------------------------------------------------------- \\
+	// =========================================================================================================================
+	// ====================================================== COSTRUTTORI ======================================================
+	// =========================================================================================================================
+		
 	public KDate(){
 		this.valore = null;
+		this.dataInterna = null;
 	}
 	/**
 	 * Crea una nuova data, inizianizzandola in base al numero di millisecondi passati dalla data nota come 'the epoch'
@@ -114,42 +118,111 @@ public class KDate implements KFormat
 			this.dataInterna = null;
 		}
 	}
-
-	// --------------------------------------------------------- metodi privati --------------------------------------------------------- \\ 
-
-	private boolean skipFormat(){
-		return (valore == null ||
-				valore.toString().trim().equalsIgnoreCase(BLANK_VALUE) ||
-				valore.toString().trim().equalsIgnoreCase(ND_VALUE) ||
-				valore.toString().trim().equalsIgnoreCase(NC_VALUE) ||
-				valore.toString().trim().equalsIgnoreCase(NS_VALUE) ||
-				valore.toString().trim().equalsIgnoreCase(UNDEFINED_VALUE) ||
-				valore.toString().trim().equalsIgnoreCase(undefined) 
-				//||(valore instanceof Date && isDateIstanceSkipFormat((Date)valore)) 
-				);
-	}
-
-	private String getStringOnSkipFormat() {
-		if(valore==null)return undefined;
-		if(valore.toString().trim().equals(BLANK_VALUE))return BLANK_VALUE;
-
-		return valore.toString();
-	}
-
-
-	private String applyPattern(SimpleDateFormat pattern){
-		if(dataInterna==null || skipFormat() )return getStringOnSkipFormat();
-		try{
-			return pattern.format(dataInterna);
-		}catch(Exception e){
-			System.out.println("Pattern di output non valido: "+pattern);
-			return getString();
+	
+	/** Costruttore di copia */
+	public KDate(KDate other)
+	{
+		this.undefined = other.undefined;
+		this.patternInput = other.patternInput;
+		this.patternOutput = other.patternOutput;
+		if(other.valore == null && other.dataInterna == null)
+		{
+			System.out.println("KDate: impossibile copiare l'oggetto - inizializzo questo a vuoto ");
+			this.dataInterna = null;
+			this.valore = null;
+			this.patternInput  = new SimpleDateFormat();
+			this.patternOutput = KDate_Params.DD_MM_YYYY;
+			this.undefined 	   = UNDEFINED_VALUE;
+		}
+		else if(other.dataInterna != null)
+		{
+			this.valore = new Long(other.dataInterna.getTime());
+			this.dataInterna = new Date(other.dataInterna.getTime());
+		}
+		else if(other.valore instanceof Long)
+		{
+			this.valore = new Long( (Long) other.valore);
+			this.dataInterna = new Date((Long) this.valore);
+		}
+		else if(other.valore instanceof String)
+		{
+			this.valore = other.valore;
+			if(!valore.equals(""))
+			{
+				try{
+					if(!skipFormat())
+						this.dataInterna = (patternInput.parse((String) valore));
+				}catch(Exception e){
+					System.out.println("KDate errata o Pattern di input non valido: \""+valore+"\" --> "+patternInput);
+				}
+			}
+			else
+				this.dataInterna = null;
+		}
+		else if(other.valore instanceof Date)
+		{
+			this.valore = new Long( ((Date)(other.valore)).getTime() );
+			this.dataInterna = new Date((Long) this.valore);
+		}
+		else
+		{
+			System.out.println("KDate: impossibile copiare l'oggetto - inizializzo questo a vuoto ");
+			this.dataInterna = null;
+			this.valore = null;
+			this.patternInput  = new SimpleDateFormat();
+			this.patternOutput = KDate_Params.DD_MM_YYYY;
+			this.undefined 	   = UNDEFINED_VALUE;
 		}
 	}
+	
+	// =========================================================================================================================
+	// ======================================================   STATICI   ======================================================
+	// =========================================================================================================================
+		
+		/** ritorna timeStamp corrente utilizzando il pattern dd/MM/yyyy HH:mm:ss */
+		public static KDate now()
+		{
+			return new KDate(new Date(), KDate_Params.DD_sl_MM_sl_YYYY_HH_MM_SS);
+		}
+		
+		/** ritorna timeStamp corrente utilizzando il pattern passato in input */
+		public static KDate now(SimpleDateFormat pattern)
+		{
+			return new KDate(new Date(), pattern);
+		}
 
-	/**
-	 * GETTER E SETTER
-	 */
+		// =========================================================================================================================
+		// =====================================================   OPERAZIONI   ====================================================
+		// =========================================================================================================================
+		
+		/**Torna una data == this + tempo (espresso in millisecondi). Non modifica questa data. Dare un valore negativo se si vogliono togliere*/
+		public KDate add(long millis)
+		{
+			KDate ret = new KDate(this);
+			try
+			{
+				ret.valore = this.dataInterna.getTime() + millis;
+				ret.dataInterna = new Date((Long) ret.valore);
+			}
+			catch (Exception e) {
+				System.out.println("KDate::add(millis) - richiesta operazione di somma su data non valida");
+			}
+			return ret;
+		}
+		/**Torna una data == this + n° giorni. Non modifica questa data. Dare un valore negativo se si vogliono togliere*/
+		public KDate addGiorni(int ngiorni)
+		{
+			long millis = (long)(ngiorni)*24L*60L*60L*1000L;
+			return this.add(millis);
+		}
+		
+		//TODO per aggiungere e sottrarre mesi bisogna per forza usare l'oggetto Calendar come intermezzo
+		//public Data addMesi(int nmesi) {Calendar cal = Calendar.getInstance(); //sottrai un mese da calendar e poi prendi il tempo come millis e con quello crei la nuova data da restituire}
+
+	// =========================================================================================================================
+	// =================================================   GETTERS E SETTERS   =================================================
+	// =========================================================================================================================
+
 	public Serializable getValore() {
 		return valore;
 	}
@@ -178,16 +251,12 @@ public class KDate implements KFormat
 		this.undefined = undefined;
 	}
 
-	/**
-	 * Converte la data in java.util.Date
-	 */
+	/** Converte la data in java.util.Date */
 	public Date getDate() {
 		return getDataInterna();
 	}
 
-	/**
-	 * Converte la data in java.util.Date, settando le ore ,i minuti e i secondi a 0 
-	 */
+	/** Converte la data in java.util.Date, settando le ore ,i minuti e i secondi a 0  */
 	public Date getDateStart() {
 		if(getDataInterna()==null)return null;
 		Calendar cal = Calendar.getInstance();       // get calendar instance
@@ -198,9 +267,7 @@ public class KDate implements KFormat
 
 		return cal.getTime();
 	}
-	/**
-	 * Converte la data in java.util.Date, settando le ore ,i minuti e i secondi a 23
-	 */
+	/** Converte la data in java.util.Date, settando le ore ,i minuti e i secondi a 23 */
 	public Date getDateEnd() {
 		if(getDataInterna()==null)return null;
 		Calendar cal = Calendar.getInstance();       // get calendar instance
@@ -212,25 +279,22 @@ public class KDate implements KFormat
 		return cal.getTime();
 	}
 
-	/**
-	 * Converte la data in java.sql.Date
-	 */
+	/** Converte la data in java.sql.Date */
 	public java.sql.Date getSqlDate() {
 		if(getDataInterna()==null)return null;
 		return new java.sql.Date(getDataInterna().getTime());
 	}
 
-	/**
-	 * Converte la data in String
-	 */
+	/** Converte la data in String */
 	public String getString() {
 		if(valore==null)return BLANK_VALUE;
 		return valore.toString();
 	}
 
-	/**
-	 * Metodi di formattazione
-	 */
+	// =========================================================================================================================
+	// ===================================================   FORMATTAZIONE   ===================================================
+	// =========================================================================================================================
+		
 	public String getAnno() {
 		return applyPattern(KDate_Params.YYYY);
 	}
@@ -329,6 +393,7 @@ public class KDate implements KFormat
 		return applyPattern(KDate_Params.HHMMSS);
 	}
 
+	@Override
 	public String toString(){
 		return applyPattern(patternOutput);
 	}
@@ -341,6 +406,10 @@ public class KDate implements KFormat
 			result = prime + ((valore == null) ? 0 : valore.hashCode());
 		return result;
 	}
+	
+	// =========================================================================================================================
+	// ======================================================   BOOLEANI   =====================================================
+	// =========================================================================================================================
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -393,5 +462,39 @@ public class KDate implements KFormat
 		calData.setTime(data.getDataInterna());          // set cal to date
 
 		return calThis.after(calData);
+	}
+	
+	// =========================================================================================================================
+	// ======================================================   PRIVATI   ======================================================
+	// ========================================================================================================================= 
+
+	private boolean skipFormat(){
+		return (valore == null ||
+				valore.toString().trim().equalsIgnoreCase(BLANK_VALUE) ||
+				valore.toString().trim().equalsIgnoreCase(ND_VALUE) ||
+				valore.toString().trim().equalsIgnoreCase(NC_VALUE) ||
+				valore.toString().trim().equalsIgnoreCase(NS_VALUE) ||
+				valore.toString().trim().equalsIgnoreCase(UNDEFINED_VALUE) ||
+				valore.toString().trim().equalsIgnoreCase(undefined) 
+				//||(valore instanceof Date && isDateIstanceSkipFormat((Date)valore)) 
+				);
+	}
+
+	private String getStringOnSkipFormat() {
+		if(valore==null)return undefined;
+		if(valore.toString().trim().equals(BLANK_VALUE))return BLANK_VALUE;
+
+		return valore.toString();
+	}
+
+
+	private String applyPattern(SimpleDateFormat pattern){
+		if(dataInterna==null || skipFormat() )return getStringOnSkipFormat();
+		try{
+			return pattern.format(dataInterna);
+		}catch(Exception e){
+			System.out.println("Pattern di output non valido: "+pattern);
+			return getString();
+		}
 	}
 }

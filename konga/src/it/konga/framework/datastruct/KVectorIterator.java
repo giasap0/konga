@@ -92,6 +92,7 @@ public class KVectorIterator<T> implements Iterator<T>
 	
 	/** valore del nodo puntato */
 	public T getData()					{if(_pVector== null) return null; return _pVector.at(_currentIndex);}
+	public int currentIndex()			{return _currentIndex;}
 	public boolean isValid()			{return _pVector != null;}
 	public void gotoBegin()				{if(_pVector != null) _currentIndex = 0;}
 	public void gotoEnd()				{if(_pVector != null) _currentIndex = _pVector.size()-1;}

@@ -1,5 +1,6 @@
 package it.konga.framework.datastruct;
 
+import it.konga.framework.interfaces.KList;
 import it.konga.framework.interfaces.Ptr_Function_Compare;
 
 import java.io.Serializable;
@@ -11,11 +12,11 @@ import java.util.List;
 
 
 /**
- * tipo arrayList ma con più metodi
+ * Tipo arrayList ma con più metodi
  * @author Giampaolo Saporito
  */
 @SuppressWarnings("unchecked")
-public class KVector<T> implements Serializable, Iterable<T>
+public class KVector<T> implements Serializable, KList<T>
 {
 	private static final long serialVersionUID = -5316121059953715244L;
 	// ------------------------------------------------------------------------- fields ------------------------------------------------------------------------- \\
@@ -146,16 +147,6 @@ public class KVector<T> implements Serializable, Iterable<T>
 		++_size;
 		return this;
 	}
-	/** insert values at last position<br>return this */
-	public KVector<T> append(KVector<? extends T> other)
-	{
-		if(other == null || other._size <= 0)
-			return this;
-		this.reserve(other._size);
-		for(int i=0; i < other.size(); i++)
-			this.append(other.at(i));
-		return this;
-	}
 	
 	public KVector<T> append(Collection<? extends T> list)
 	{
@@ -170,7 +161,7 @@ public class KVector<T> implements Serializable, Iterable<T>
 		return this;
 	}
 
-	/** if value == null return false */
+	/** Non agisce su elementi null, se l'input == null torna false */
 	public boolean contains(T value)
 	{
 		if (_v.length == 0) return false;
@@ -382,7 +373,86 @@ public class KVector<T> implements Serializable, Iterable<T>
 	{
 		return new KVectorIterator<T>(this);
 	}
+	
+	// ------------------------------------------------------------------------- Interfacce - KList - accesso con iteratori ------------------------------------------------------------------------- \\
 
+	/** Insert values at last position<br>return this */
+	@Override
+	public KVector<T> append(KList<? extends T> other)
+	{
+		if(other == null || other.size() <= 0)
+			return this;
+		this.reserve(other.size());
+		for(T x : other)
+		{
+			this.append(x);
+		}
+		return this;
+	}
+	
+	@Override
+	public KVectorIterator<T> begin() {
+		return this.iterator();
+	}
+	@Override
+	public Iterator<T> end() {
+		KVectorIterator<T> itr = this.iterator();
+		itr.gotoEnd();
+		return itr;
+	}
+	
+	@Override
+	public Iterator<T> iterator(int indx) {
+		KVectorIterator<T> itr = begin();
+		for(int i=0; i < this.size(); i++)
+		{
+			if(indx == itr.currentIndex())
+				return itr;
+			itr.next();
+		}
+		return itr;
+	}
+	
+	@Override
+	public void insert(Iterator<T> itr, T value)
+	{
+		if(!(itr instanceof KVectorIterator<?>))
+			return;
+		this.insert(((KVectorIterator<T>) itr).currentIndex() , value);
+	}
+	
+	@Override
+	public T remove(Iterator<T> itr) {
+		if(!(itr instanceof KVectorIterator<?>))
+			return null;
+		return this.remove(((KVectorIterator<T>) itr).currentIndex() );
+	}
+	@Override
+	public T removeFirst() {
+		return remove(0);		
+	}
+	@Override
+	public T removeLast() {
+		return remove( size() -1 );
+		
+	}
+	@Override
+	public void removeRange(int fromIndex, int toIndex) {
+		remove(fromIndex, toIndex);
+	}
+	@Override
+	public void replace(Iterator<T> itr, T newValue) {
+		if(!(itr instanceof KVectorIterator<?>))
+			return;
+		int indx = ((KVectorIterator<T>) itr).currentIndex();
+		this.replace(indx, newValue);		
+	}
+	@Override
+	public Iterator<T> iteratorOf(T item)
+	{
+		int indx = this.indexOf(item);
+		return this.iterator(indx);
+	}
 	
 }//EO KVector<T>
 

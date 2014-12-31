@@ -1,5 +1,8 @@
 package it.konga.framework.datastruct;
 
+import it.konga.framework.interfaces.KList;
+import it.konga.framework.interfaces.Ptr_Function_Compare;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,7 +17,7 @@ import java.util.Iterator;
  * @author Giampaolo Saporito
  * @Date 05/09/2014
  */
-public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
+public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 {
 	private static final long serialVersionUID = -4921861046503460358L;
 
@@ -171,12 +174,11 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 	public T first()							{ return _head._data; }
 	/** ultimo elemento della lista */
 	public T last()								{ return _tail._data;}
-	public KListIterator<T> begin()			{ return new KListIterator<T>(this,_head); }
+	public KListIterator<T> begin()				{ return new KListIterator<T>(this,_head); }
 	public KListIterator<T> end()				{ return new KListIterator<T>(this,_tail); }
 	@Override
-	public KListIterator<T> iterator()		{ return  begin(); }
-	/**
-	 * torna l'iteratore che punta all'eleemento con indice indx. L'indice parte da 0
+	public KListIterator<T> iterator()			{ return  begin(); }
+	/** Torna l'iteratore che punta all'eleemento con indice indx. L'indice parte da 0
 	 * @param indx parte da 0
 	 * @return iteratore
 	 */
@@ -192,9 +194,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		return itr;
 	}
 
-	/**
-	 * Fa una deep copy dell'oggetto. Implementato tramite serializzazione
-	 */
+	/** Fa una deep copy dell'oggetto. Implementato tramite serializzazione */
 	@SuppressWarnings("unchecked")
 	@Override
 	public KLinkedList<T> clone() throws CloneNotSupportedException
@@ -216,8 +216,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		}
 	}
 
-	/**
-	 * appende un riferimento all'oggetto<br>return this
+	/** Appende un riferimento all'oggetto<br>return this
 	 * @param data
 	 */
 	public KLinkedList<T> append(T data)
@@ -236,8 +235,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		return this;
 	}
 
-	/**
-	 * appende riferimenti agli elementi dell'altra lista<br> return this
+	/** Appende riferimenti agli elementi dell'altra lista<br> return this
 	 * @param other altra lista
 	 */
 	public KLinkedList<T> append( KLinkedList<T> other)
@@ -259,8 +257,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		}
 		return this;
 	}
-	/**
-	 * appende riferimenti agli elementi dell'altra lista<br> return this
+	/** Appende riferimenti agli elementi dell'altra lista<br> return this
 	 * @param other altra lista
 	 */
 	public KLinkedList<T> append (Collection<? extends T> list)
@@ -275,7 +272,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		return this;
 	}
 	/**
-	 * non fa una copia degli elementi ma punta agli stessi
+	 * Non fa una copia degli elementi ma punta agli stessi
 	 * @param other altra lista
 	 */
 	public void copy(KLinkedList<T> other)
@@ -288,10 +285,10 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 	}
 
 	/**
-	 * inserisce un elemento all'inizio della lista
+	 * Inserisce un elemento all'inizio della lista
 	 * @param data valore da attribuire al nodo
 	 */
-	void prepend( T data)
+	public void prepend( T data)
 	{
 		KListNode newNode = new KListNode();
 		newNode._data = data;
@@ -302,7 +299,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		_count++;
 	}
 
-	/** inserts an item AFTER the current iterator (append if iterator is invalid)
+	/** Inserts an item AFTER the current iterator (append if iterator is invalid)
 	 * @param itr iteratore posizione
 	 * @param value valore da inserire
 	 */
@@ -326,21 +323,22 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 	}
 
 	/**
-	 * rimuove l'elemento puntato dall'iteratore.<br>
+	 * Rimuove l'elemento puntato dall'iteratore.<br>
 	 * L'iteratore punterà al nodo successivo.
 	 * @param itr iteratore della lista
 	 */
-	public void remove(KListIterator<T> itr)
+	public T remove(KListIterator<T> itr)
 	{
 		KListNode node = _head;
 		if( ! itr._pList.equals(this) ) 			//non è di questa lista
 			throw new IllegalArgumentException("KLinkedList::remove(itr) - invalid iterator");
 		if(itr._pNode == null )						//iterator is invalid
-			return;
+			return null;
+		T temp = null;
 		if(itr._pNode.equals(_head) )				//iterator is head
 		{
 			itr.next();
-			removeFirst();
+			return removeFirst();
 		}
 		else
 		{
@@ -348,6 +346,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 			while( ! node.next().equals( itr._pNode ))		
 				node = node.next();
 			itr.next();						//muovi l'iterator fino al nodo da cancellare
+			temp = itr.getData();
 			if( node.next().equals(_tail))
 			{
 				_tail= node;						//update tail
@@ -355,26 +354,34 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 			node._pNext = itr._pNode;				//re-link the list
 			_count--;
 		}
+		return temp;
 	}
-	public void removeFirst()
+	
+	public T removeFirst()
 	{
 		KListNode node = null;
+		T temp = null;
 		if( _head != null )
 		{
 			node = _head.next();
+			temp = _head._data;
 			_head = node;
 			if(_head == null)		//la lista era di un solo elemento
 				_tail= null;
 			_count--;
 		}
+		return temp;
 	}
-	public void removeLast()
+	
+	public T removeLast()
 	{
 		KListNode node = _head;
 		if( _head == null)				//lista vuota
-			return;
+			return null;
+		T temp = null;
 		if(_head == _tail)				//only 1 element
 		{
+			temp = _tail._data;
 			_head = _tail = null;
 		}
 		else
@@ -383,13 +390,16 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 			{
 				node = node.next();
 			}
+			temp = _tail._data;
 			_tail= node;					//reassign tail
 			node._pNext = null;
 		}
 		_count--;
+		return temp;
 	}
+	
 	/**
-	 * rimuove tutti gli elementi con indce incluso nell'intervallo passato in input.<br>
+	 * Rimuove tutti gli elementi con indce incluso nell'intervallo passato in input.<br>
 	 * I limiti sono INCLUSIVI<br>
 	 * Gli indici partono da 0 e non possono assumere lo stesso valore<br>
 	 * ToIndex deve essere > fromIndex
@@ -417,6 +427,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		}
 		ptrFrom._pNext = ptrNext;
 	}
+	
 	public void clear()
 	{
 		KListNode itr = _head;
@@ -440,7 +451,7 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		itr._pNode._data = newValue;
 	}
 
-	/** non agisce su elementi null, se l'input == null torna false */
+	/** Non agisce su elementi null, se l'input == null torna false */
 	public boolean contains(T item)
 	{
 		if(item==null)
@@ -523,5 +534,52 @@ public class KLinkedList<T> implements Serializable, Iterable<T>, Cloneable
 		stream.writeObject( _tail );
 	}
 
+	@Override
+	public int count(T value) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public KList<T> append(KList<? extends T> other) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public KList<T> fill(T value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public KList<T> fill(T value, int size) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void sort(Ptr_Function_Compare<T> p_compare) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void insert(Iterator<T> itr, T value) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public T remove(Iterator<T> itr) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void replace(Iterator<T> itr, T newValue) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * lista semplicemente linkata. Usare ZListIterator per iterarla.
+ * Lista semplicemente linkata. Usare KListIterator per iterarla.
  * @author Giampaolo Saporito
  * @Date 05/09/2014
  */
@@ -164,17 +164,23 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 
 	// ----------------------------------------------------------------------------------- metodi publici ----------------------------------------------------------------------------------- \\
 
+	@Override
 	public boolean isEmpty()						
 	{
 		if(_head==null) return true; return false;
 	}
 	/** numero di elementi nella lista */
+	@Override
 	public int size() 							{ return _count;}
 	/** primo elemento della lista */
+	@Override
 	public T first()							{ return _head._data; }
 	/** ultimo elemento della lista */
+	@Override
 	public T last()								{ return _tail._data;}
+	@Override
 	public KListIterator<T> begin()				{ return new KListIterator<T>(this,_head); }
+	@Override
 	public KListIterator<T> end()				{ return new KListIterator<T>(this,_tail); }
 	@Override
 	public KListIterator<T> iterator()			{ return  begin(); }
@@ -182,6 +188,7 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 	 * @param indx parte da 0
 	 * @return iteratore
 	 */
+	@Override
 	public KListIterator<T> iterator(int indx)  
 	{
 		if(indx<0 || indx >= this.size())
@@ -219,6 +226,7 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 	/** Appende un riferimento all'oggetto<br>return this
 	 * @param data
 	 */
+	@Override
 	public KLinkedList<T> append(T data)
 	{
 		if(_head == null)
@@ -238,28 +246,25 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 	/** Appende riferimenti agli elementi dell'altra lista<br> return this
 	 * @param other altra lista
 	 */
-	public KLinkedList<T> append( KLinkedList<T> other)
+	public KList<T> append( KList<? extends T> other)
 	{
 		if(_head == null)
 		{
 			this.copy(other);
 		}
-
 		else
 		{
-			KListNode ptr = other._head;
-			while( ptr != other._tail )
-			{
-				append( ptr._data);
-				ptr = ptr._pNext;
+			for (T t : other) {
+				this.append(t);
 			}
-			append( other._tail._data );
 		}
 		return this;
 	}
+	
 	/** Appende riferimenti agli elementi dell'altra lista<br> return this
 	 * @param other altra lista
 	 */
+	@Override
 	public KLinkedList<T> append (Collection<? extends T> list)
 	{
 		if( list == null || list.size() == 0)
@@ -275,7 +280,7 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 	 * Non fa una copia degli elementi ma punta agli stessi
 	 * @param other altra lista
 	 */
-	public void copy(KLinkedList<T> other)
+	public void copy(KList<? extends T> other)
 	{
 		_head = _tail = null;
 		for (T element : other)
@@ -288,6 +293,7 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 	 * Inserisce un elemento all'inizio della lista
 	 * @param data valore da attribuire al nodo
 	 */
+	@Override
 	public void prepend( T data)
 	{
 		KListNode newNode = new KListNode();
@@ -303,16 +309,20 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 	 * @param itr iteratore posizione
 	 * @param value valore da inserire
 	 */
-	void insert(  KListIterator<T> itr, T value)
+	@Override
+	public void insert( Iterator<T> itr, T value)
 	{
-		if( ! itr._pList.equals(this) ) 		//non è iteratore di questa lista
+		if(!(itr instanceof KListIterator<?>))
+			return;
+		KListIterator<T> it = (KListIterator<T>)itr;
+		if( ! it._pList.equals(this) ) 		//non è iteratore di questa lista
 			throw new IllegalArgumentException("KLinkedList::insert(itr, value) - invalid iterator");
-		if( itr._pNode != null)					//iteratore valido
+		if( it._pNode != null)					//iteratore valido
 		{
-			itr._pNode.insertAfter(value);
-			if( itr._pNode.equals(_tail) )		//update tail
+			it._pNode.insertAfter(value);
+			if( it._pNode.equals(_tail) )		//update tail
 			{
-				_tail = itr._pNode._pNext; 
+				_tail = it._pNode._pNext; 
 			}
 			_count++;
 		}
@@ -327,8 +337,11 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 	 * L'iteratore punterà al nodo successivo.
 	 * @param itr iteratore della lista
 	 */
-	public T remove(KListIterator<T> itr)
+	public T remove(Iterator<T> it)
 	{
+		if(!(it instanceof KListIterator<?>))
+			return null;
+		KListIterator<T> itr = (KListIterator<T>)it;
 		KListNode node = _head;
 		if( ! itr._pList.equals(this) ) 			//non è di questa lista
 			throw new IllegalArgumentException("KLinkedList::remove(itr) - invalid iterator");
@@ -357,6 +370,7 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 		return temp;
 	}
 	
+	@Override
 	public T removeFirst()
 	{
 		KListNode node = null;
@@ -373,6 +387,7 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 		return temp;
 	}
 	
+	@Override
 	public T removeLast()
 	{
 		KListNode node = _head;
@@ -406,6 +421,7 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 	 * @param fromIndex primo indice da cancellare. Parte da 0
 	 * @param toIndex ultimo indice da cancellare. Parte da 0
 	 */
+	@Override
 	public void removeRange(int fromIndex, int toIndex) 
 	{
 		if( fromIndex<0 || fromIndex>= this.size() || toIndex>= this.size() || toIndex<= fromIndex)
@@ -428,6 +444,7 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 		ptrFrom._pNext = ptrNext;
 	}
 	
+	@Override
 	public void clear()
 	{
 		KListNode itr = _head;
@@ -442,8 +459,11 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 		_count=0;
 	}
 
-	public void replace(KListIterator<T> itr, T newValue)
+	public void replace(Iterator<T> it, T newValue)
 	{
+		if(!(it instanceof KListIterator<?>))
+			return;
+		KListIterator<T> itr = (KListIterator<T>)it;
 		if( ! itr._pList.equals(this) )
 			throw new IllegalArgumentException("KLinkedList::replace(itr, value) - invalid iterator");
 		if(itr._pNode == null)
@@ -452,6 +472,7 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 	}
 
 	/** Non agisce su elementi null, se l'input == null torna false */
+	@Override
 	public boolean contains(T item)
 	{
 		if(item==null)
@@ -536,50 +557,59 @@ public class KLinkedList<T> implements Serializable,  KList<T>, Cloneable
 
 	@Override
 	public int count(T value) {
-		// TODO Auto-generated method stub
-		return 0;
+		if(value == null)
+			return 0;
+		int count = 0;
+		for (T x : this) {
+			if(value.equals(x))
+				++count;
+		}
+		return count;
 	}
 
 	@Override
-	public KList<T> append(KList<? extends T> other) {
-		// TODO Auto-generated method stub
-		return null;
+	public KList<T> fill(T value)
+	{
+		if( _head == null)				//lista vuota
+			return this;
+		if(_head == _tail)				//only 1 element
+		{
+			_tail._data = value;
+			_head = _tail;
+		}
+		KLinkedList<T>.KListNode ptr = _head;
+		while(ptr._pNext != null)
+		{
+			ptr._data = value;
+		}
+		return this;
 	}
 
+	/** Ordina l'array in modo crescente (dal più piccolo al più grande) utilizzando la funzione compare in input.<br> */
 	@Override
-	public KList<T> fill(T value) {
-		// TODO Auto-generated method stub
-		return null;
+	public void sort(Ptr_Function_Compare<T> p_compare)
+	{
+		if(_head == null)					//lista vuota
+			return;
+		if(_head == _tail)					//only 1 element
+			return;
+		KLinkedList<T>.KListNode i = _head;
+		while(i._pNext != null)
+		{
+			KLinkedList<T>.KListNode j = _head;
+			while( j._pNext != null)
+			{
+				T temp = j._data;
+				T prox = j._pNext._data;
+				if( p_compare.compare(temp, prox)>0)
+				{
+					j._data = j._pNext._data;
+					j._pNext._data = temp;
+				}
+			}
+			j = j._pNext;
+		}
+		i = i._pNext;
 	}
-
-	@Override
-	public KList<T> fill(T value, int size) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void sort(Ptr_Function_Compare<T> p_compare) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void insert(Iterator<T> itr, T value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public T remove(Iterator<T> itr) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void replace(Iterator<T> itr, T newValue) {
-		// TODO Auto-generated method stub
-		
-	}
-
-}
+ 
+}//EO KLinkedList

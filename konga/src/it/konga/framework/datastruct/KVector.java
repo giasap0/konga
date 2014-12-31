@@ -190,8 +190,10 @@ public class KVector<T> implements Serializable, KList<T>
 	}
 	
 	/**riempie il vettore con valori == 'value'.<br>Torna this */
+	@Override
 	public KVector<T> fill(T value)							{return fill(value,-1);}
 	/**riempie il vettore con valori == 'value' e se il size è != -1 fa il resize.<br>Torna this */
+
 	public KVector<T> fill(T value, int size)
 	{
 		if(size<0)
@@ -309,7 +311,7 @@ public class KVector<T> implements Serializable, KList<T>
 		_v[atIndx] = value;
 	}
 	
-	/** ordina l'array in modo crescente (dal più piccolo al più grande) utilizzando la funzione compare in input.<br>(bubble sort) */
+	/** Ordina l'array in modo crescente (dal più piccolo al più grande) utilizzando la funzione compare in input.<br>(bubble sort) */
 	public void sort( Ptr_Function_Compare<T> p_compare )
 	{
 		for(int i = 0; i<_size-1; i++){

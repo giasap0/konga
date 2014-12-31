@@ -29,8 +29,6 @@ public interface KList<T> extends Iterable<T>
 
 	/**riempie la lista con valori == 'value'.<br>Torna this */
 	public KList<T> fill(T value);
-	/**riempie la lista con valori == 'value' e se il size è != -1 fa il resize.<br>Torna this */
-	public KList<T> fill(T value, int size);
 	
 	/** Inserisce un elemento all'inizio della lista */
 	public void prepend( T value);	

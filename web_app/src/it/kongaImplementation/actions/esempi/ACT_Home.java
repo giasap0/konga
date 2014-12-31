@@ -17,7 +17,7 @@ public class ACT_Home extends KBaseAction
 	@Action(value="/home")
 	public String home() throws Exception
 	{
-		KUser utente = (KUser) getSession().get(KUser.SESSION_ID);
+		KUser utente = (KUser) getSession().get(KUser.getSessionID() );
 		String isUtente = utente == null ? "no utente" : utente.getAccessLevel().getDescription();
 		System.out.println( isUtente );
 		return "go_home";

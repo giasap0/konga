@@ -16,5 +16,11 @@ public class KAbstract_User extends KAbstract_Dto
 		if( getId() < 0) throw new InvalidObjectException("L'id deve essere positivo");	
 		if( !_accessLevel.isValid() ) throw new InvalidObjectException("Livello di accesso non valido");	
 	}
+
+
+	public static String getSessionID()
+	{
+		return "user";
+	}
 	
 }//EO KAbstract_User

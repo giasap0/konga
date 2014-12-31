@@ -6,7 +6,6 @@ import it.kongaImplementation.enumerations.KAccessLevel;
 public class KUser extends KAbstract_User
 {
 	private static final long serialVersionUID = 7671049049655851428L;
-	public static final String SESSION_ID = "user";
 
 	public KUser()
 	{

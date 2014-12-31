@@ -26,7 +26,7 @@ public class ACT_Login extends KBaseAction
 		
 		KUser user = new KUser();
 		user.setAccessLevel(KAccessLevel.NORMALE);
-		getSession().put(KUser.SESSION_ID, user);
+		getSession().put(KUser.getSessionID(), user);
 		return "go_login";
 	}
 	

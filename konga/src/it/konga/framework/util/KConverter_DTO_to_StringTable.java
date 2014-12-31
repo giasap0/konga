@@ -61,6 +61,11 @@ public class KConverter_DTO_to_StringTable<DTO extends KAbstract_Dto > {
     
     private void buildTable() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException
     {
+    	if(_listaOggetti == null || _listaOggetti.size() == 0)
+    	{
+    		table = new String[0][];
+    		return;
+    	}
 		table = new String[_listaOggetti.size()][];
 		Object ret = null;
 		for(int r = 0; r < _listaOggetti.size(); r++)
@@ -81,7 +86,9 @@ public class KConverter_DTO_to_StringTable<DTO extends KAbstract_Dto > {
     
     private void initMethods(List<String> metodiDaInvocare) throws NullPointerException, SecurityException, NoSuchMethodException
     {
-		if(metodiDaInvocare == null || _listaOggetti == null)
+    	if( _listaOggetti == null || _listaOggetti.size() == 0)
+    		return;
+		if(metodiDaInvocare == null)
 		    throw new NullPointerException("Converter_Dto_ToStringTable::initMethods() - parametro in input == null");
 		if(metodiDaInvocare.size() <= 0)
 		    throw new InvalidParameterException("Converter_Dto_ToStringTable::initMethods() - la lista dei metodi da invocare è vuota");

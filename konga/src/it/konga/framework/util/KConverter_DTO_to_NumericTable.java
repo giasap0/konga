@@ -53,6 +53,11 @@ public class KConverter_DTO_to_NumericTable<DTO extends KAbstract_Dto > {
     
     private void buildTable() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, NumberFormatException
     {
+    	if(_listaOggetti == null || _listaOggetti.size() == 0)
+    	{
+    		table = new Double[0][];
+    		return;
+    	}
 		table = new Double[_listaOggetti.size()][];
 		Object ret = null;
 		for(int r = 0; r < _listaOggetti.size(); r++)
@@ -77,7 +82,9 @@ public class KConverter_DTO_to_NumericTable<DTO extends KAbstract_Dto > {
     
     private void initMethods(List<String> metodiDaInvocare) throws NullPointerException, SecurityException, NoSuchMethodException
     {
-		if(metodiDaInvocare == null || _listaOggetti == null)
+    	if( _listaOggetti == null || _listaOggetti.size() == 0)
+    		return;
+		if(metodiDaInvocare == null)
 		    throw new NullPointerException();
 		if(metodiDaInvocare.size() <= 0)
 		    throw new InvalidParameterException("la lista dei metodi da invocare è vuota");

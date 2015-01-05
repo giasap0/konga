@@ -21,7 +21,14 @@ public class CustomInterceptor implements Interceptor
 	public String intercept(ActionInvocation invocation) throws Exception
 	{
 		System.out.println("MyCustomInterceptor: Inside intercept - pre process");
-		String ret = invocation.invoke();
+		
+		String ret = null;
+		try {
+			ret = invocation.invoke();
+		} catch (Exception e) {
+			System.out.println("c'è stato un errore applicativo");
+		}
+		
 		System.out.println("MyCustomInterceptor: Inside intercept - post process");
 		return ret;
 	}

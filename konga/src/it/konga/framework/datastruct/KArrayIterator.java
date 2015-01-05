@@ -2,17 +2,17 @@ package it.konga.framework.datastruct;
 
 import java.util.Iterator;
 
-public class KVectorIterator<T> implements Iterator<T>
+public class KArrayIterator<T> implements Iterator<T>
 {
-	protected KVector<T> _pVector;
+	protected KArray<T> _pVector;
 	protected int _currentIndex = 0;
 
 	// *************************************************************************************************
 	// 									costruttori
 	// *************************************************************************************************
-	public KVectorIterator()							{}
-	public KVectorIterator(KVector<T> vector)			{_pVector=vector;}
-	public KVectorIterator(KVectorIterator<T> iter)		{_pVector=iter._pVector;}
+	public KArrayIterator()							{}
+	public KArrayIterator(KArray<T> vector)			{_pVector=vector;}
+	public KArrayIterator(KArrayIterator<T> iter)	{_pVector=iter._pVector;}
 
 	// *************************************************************************************************
 	// 									implements iterator
@@ -72,11 +72,11 @@ public class KVectorIterator<T> implements Iterator<T>
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof KVectorIterator)) {
+		if (!(obj instanceof KArrayIterator)) {
 			return false;
 		}
 		@SuppressWarnings("unchecked")
-		KVectorIterator<T> other = (KVectorIterator<T>) obj;
+		KArrayIterator<T> other = (KArrayIterator<T>) obj;
 		if (_currentIndex != other._currentIndex) {
 			return false;
 		}

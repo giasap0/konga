@@ -12,11 +12,11 @@ import java.util.List;
 
 
 /**
- * Tipo arrayList ma con più metodi
+ * Tipo ArrayList ma con più metodi
  * @author Giampaolo Saporito
  */
 @SuppressWarnings("unchecked")
-public class KVector<T> implements Serializable, KList<T>
+public class KArray<T> implements Serializable, KList<T>
 {
 	private static final long serialVersionUID = -5316121059953715244L;
 	// ------------------------------------------------------------------------- fields ------------------------------------------------------------------------- \\
@@ -24,15 +24,15 @@ public class KVector<T> implements Serializable, KList<T>
 	private int _size;
 
 	// ------------------------------------------------------------------------- costruttori ------------------------------------------------------------------------- \\
-	public KVector()				{this(10);}
-	public KVector(int capacity )
+	public KArray()				{this(10);}
+	public KArray(int capacity )
 	{
 		_size = 0;
 		_v = new Object[capacity];
 	}
 
-	/** costruisce un vettore di size 'size' con tutti gli elementi assegnati al valore 'value' */
-	public KVector(int size, T value)
+	/** Costruisce un vettore di size 'size' con tutti gli elementi assegnati al valore 'value' */
+	public KArray(int size, T value)
 	{
 		_v = new Object[size];
 		for (int i=0; i < _v.length; i++) {
@@ -40,7 +40,7 @@ public class KVector<T> implements Serializable, KList<T>
 		}
 		_size=size;
 	}
-	public KVector(T[] fromArray)
+	public KArray(T[] fromArray)
 	{
 		if (fromArray == null || fromArray.length == 0)
 		{
@@ -53,7 +53,7 @@ public class KVector<T> implements Serializable, KList<T>
 		}
 		_size = _v.length;
 	}
-	public KVector(KVector<T> other)
+	public KArray(KArray<T> other)
 	{
 		 _size = other._size;
 		 _v = new Object[other._v.length];
@@ -61,7 +61,7 @@ public class KVector<T> implements Serializable, KList<T>
 			 _v[i] = other._v[i];
 		 }
 	}
-	public KVector(Collection<? extends T> list)
+	public KArray(Collection<? extends T> list)
 	{
 		if(list == null || list.size() == 0)
 		{
@@ -125,7 +125,7 @@ public class KVector<T> implements Serializable, KList<T>
 	}
 	
 	/** insert value at last position<br>return this */
-	public KVector<T> append(T value)
+	public KArray<T> append(T value)
 	{
 		if(_size==0)
 		{
@@ -148,7 +148,7 @@ public class KVector<T> implements Serializable, KList<T>
 		return this;
 	}
 	
-	public KVector<T> append(Collection<? extends T> list)
+	public KArray<T> append(Collection<? extends T> list)
 	{
 		if(list == null || list.size() == 0)
 			return this;
@@ -191,10 +191,10 @@ public class KVector<T> implements Serializable, KList<T>
 	
 	/**riempie il vettore con valori == 'value'.<br>Torna this */
 	@Override
-	public KVector<T> fill(T value)							{return fill(value,-1);}
+	public KArray<T> fill(T value)							{return fill(value,-1);}
 	/**riempie il vettore con valori == 'value' e se il size è != -1 fa il resize.<br>Torna this */
 
-	public KVector<T> fill(T value, int size)
+	public KArray<T> fill(T value, int size)
 	{
 		if(size<0)
 			size = _size;
@@ -207,7 +207,10 @@ public class KVector<T> implements Serializable, KList<T>
 		}
 		return this;
 	}
-	
+	public void set(int indx, T data)
+	{
+		_v[indx] = data;
+	}
 	/**torna la posizione dell'elemento con value.equals(value).<br>Se non esiste torna -1 */
 	public int indexOf(T value)								{return indexOf(value,0);}
 	/**torna la posizione dell'elemento con value.equals(value).<br>Se non esiste torna -1 */
@@ -326,7 +329,7 @@ public class KVector<T> implements Serializable, KList<T>
 		}
 	}
 	/** scambia i vettori */
-	public void swap(KVector<T> other)
+	public void swap(KArray<T> other)
 	{
 		Object[] temp = _v;
 		int thisSize = _size;
@@ -354,7 +357,7 @@ public class KVector<T> implements Serializable, KList<T>
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		KVector<T> other = (KVector<T>) obj;
+		KArray<T> other = (KArray<T>) obj;
 		if (!Arrays.equals(_v, other._v)) {
 			return false;
 		}
@@ -364,23 +367,23 @@ public class KVector<T> implements Serializable, KList<T>
 	// ------------------------------------------------------------------------- publici statici ------------------------------------------------------------------------- \\
 
 	
-	public static<T> KVector<T> fromList( List<T> list )
+	public static<T> KArray<T> fromList( List<T> list )
 	{
-		return new KVector<T>(list);
+		return new KArray<T>(list);
 	}
 	
 	// ------------------------------------------------------------------------- Interfacce - Iterable ------------------------------------------------------------------------- \\
 	@Override
-	public KVectorIterator<T> iterator()
+	public KArrayIterator<T> iterator()
 	{
-		return new KVectorIterator<T>(this);
+		return new KArrayIterator<T>(this);
 	}
 	
 	// ------------------------------------------------------------------------- Interfacce - KList - accesso con iteratori ------------------------------------------------------------------------- \\
 
 	/** Insert values at last position<br>return this */
 	@Override
-	public KVector<T> append(KList<? extends T> other)
+	public KArray<T> append(KList<? extends T> other)
 	{
 		if(other == null || other.size() <= 0)
 			return this;
@@ -393,19 +396,19 @@ public class KVector<T> implements Serializable, KList<T>
 	}
 	
 	@Override
-	public KVectorIterator<T> begin() {
+	public KArrayIterator<T> begin() {
 		return this.iterator();
 	}
 	@Override
 	public Iterator<T> end() {
-		KVectorIterator<T> itr = this.iterator();
+		KArrayIterator<T> itr = this.iterator();
 		itr.gotoEnd();
 		return itr;
 	}
 	
 	@Override
 	public Iterator<T> iterator(int indx) {
-		KVectorIterator<T> itr = begin();
+		KArrayIterator<T> itr = begin();
 		for(int i=0; i < this.size(); i++)
 		{
 			if(indx == itr.currentIndex())
@@ -418,16 +421,16 @@ public class KVector<T> implements Serializable, KList<T>
 	@Override
 	public void insert(Iterator<T> itr, T value)
 	{
-		if(!(itr instanceof KVectorIterator<?>))
+		if(!(itr instanceof KArrayIterator<?>))
 			return;
-		this.insert(((KVectorIterator<T>) itr).currentIndex() , value);
+		this.insert(((KArrayIterator<T>) itr).currentIndex() , value);
 	}
 	
 	@Override
 	public T remove(Iterator<T> itr) {
-		if(!(itr instanceof KVectorIterator<?>))
+		if(!(itr instanceof KArrayIterator<?>))
 			return null;
-		return this.remove(((KVectorIterator<T>) itr).currentIndex() );
+		return this.remove(((KArrayIterator<T>) itr).currentIndex() );
 	}
 	@Override
 	public T removeFirst() {
@@ -444,9 +447,9 @@ public class KVector<T> implements Serializable, KList<T>
 	}
 	@Override
 	public void replace(Iterator<T> itr, T newValue) {
-		if(!(itr instanceof KVectorIterator<?>))
+		if(!(itr instanceof KArrayIterator<?>))
 			return;
-		int indx = ((KVectorIterator<T>) itr).currentIndex();
+		int indx = ((KArrayIterator<T>) itr).currentIndex();
 		this.replace(indx, newValue);		
 	}
 	@Override

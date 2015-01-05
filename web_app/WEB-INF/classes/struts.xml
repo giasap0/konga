@@ -4,9 +4,16 @@
 
 <struts>
 <constant name="struts.convention.default.parent.package" value="default"/>
-   <package name="default" extends="struts-default">
+   <package name="default" extends="struts-default"> 	
       <result-types>
          <result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" />
       </result-types>
+      <interceptors>   
+            <interceptor name="myCustomInterceptor" class="it.konga.framework.flusso.CustomInterceptor" />
+            <interceptor-stack name="customStack">
+                <interceptor-ref name="myCustomInterceptor"/>
+                <interceptor-ref name="defaultStack" />
+            </interceptor-stack>
+        </interceptors>
    </package>
 </struts>

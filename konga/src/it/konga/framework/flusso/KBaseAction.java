@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.struts2.convention.annotation.InterceptorRef;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
@@ -16,6 +17,7 @@ import com.opensymphony.xwork2.ActionSupport;
  *  @author Giampaolo Saporito
  * @Date 05/09/2014
  */
+@InterceptorRef(value="customStack")
 public abstract class KBaseAction extends ActionSupport implements ServletResponseAware, ServletRequestAware
 {
 	private static final long serialVersionUID = -1669304896799086714L;

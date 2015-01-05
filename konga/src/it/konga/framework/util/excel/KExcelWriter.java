@@ -1,10 +1,13 @@
 package it.konga.framework.util.excel;
 
 import it.konga.framework.interfaces.KFileWriter;
+import it.konga.framework.kObjects.DTO_InformazioniColonna;
 
 import java.util.ArrayList;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
@@ -26,6 +29,12 @@ public class KExcelWriter extends KMultiSheet_ExcelWriter implements KFileWriter
 	protected ArrayList<ArrayList<String>> _arrayIntestazioni;
 	/** nomi da dare ai tab degli sheet */
 	protected String[] _sheetNames;
+	/** align center */
+	protected CellStyle _styleDatiCodice = null;
+	/** align left */
+	protected CellStyle _styleDatiDescrizione = null;
+	/** align right */
+	protected CellStyle _styleDatiImporto = null;
 
 	/**
 	 * costruisce l'oggetto capace di scrivere un file excel con un certo nhumero di sheets<br>
@@ -74,33 +83,44 @@ public class KExcelWriter extends KMultiSheet_ExcelWriter implements KFileWriter
 	/**
 	 * aggiungi informazioni sul prossimo sheet
 	 * @param tabellaValori tabella dei valori da scrivere sul file
-	 * @param nomiColonne nomi da assegnare alle colonne, utilizzando lo stile definito per le intestazioni
+	 * @param infoColonne informazioni da assegnare alle colonne
 	 */
 	@Override
-	public void appendSheetData(String[][] tabellaValori, ArrayList<String> nomiColonne)
+	public void appendSheetData(String[][] tabellaValori, ArrayList<DTO_InformazioniColonna> infoColonne)
 	{
-		appendSheetData(tabellaValori, null, null, nomiColonne,null);
+		appendSheetData(tabellaValori, null, null, infoColonne,null);
 	}
 	/**
 	 * aggiungi informazioni sul prossimo sheet
 	 * @param tabellaValori tabella dei valori da scrivere sul file
 	 * @param nomeSheet nome da assegnare al tab riguardante questo sheet
 	 * @param intestazione Ogni stringa dell'array apparirà in righe successive, in alto a sinistra nel foglio, prima della tabella
-	 * @param nomiColonne nomi da assegnare alle colonne, utilizzando lo stile definito per le intestazioni
+	 * @param infoColonne informazioni da assegnare alle colonne
 	 */
-	public void appendSheetData(String[][] tabellaValori, String nomeSheet, ArrayList<String> intestazione, ArrayList<String> nomiColonne)
+	public void appendSheetData(String[][] tabellaValori, String nomeSheet, ArrayList<String> intestazione, ArrayList<DTO_InformazioniColonna> infoColonne)
 	{
-		appendSheetData(tabellaValori, nomeSheet, intestazione, nomiColonne, null);
+		appendSheetData(tabellaValori, nomeSheet, intestazione, infoColonne, null);
 	}
+
+	/**
+	 * Aggiungi informazioni sul prossiumo sheet
+	 * @param nomeSheet nome da assegnare al tab riguardante questo sheet
+	 * @param strutturaExcel struttura che rappresenta il foglio corrente. Contiene i dati, le informazioni riguardanti le colonne e l'intestazione
+	 */
+	public void appendSheetData(String nomeSheet, IStrutturaExcel strutturaExcel)
+	{
+		appendSheetData(strutturaExcel.getDati(), nomeSheet,strutturaExcel.getStringheIntestazione(), strutturaExcel.getInformazioniColonne(), null);
+	}
+
 	/**
 	 * aggiungi informazioni sul prossimo sheet
 	 * @param tabellaValori tabella dei valori da scriveere sul file
 	 * @param nomeSheet nome da assegnare al tab riguardante questo sheet
 	 * @param intestazione ogni stringa dell'arrayu apparirà in righe successive, in alto  a sinistra nel foglio, prima della tabella
-	 * @param nomiColonne nomi da assegnare alle colonne, utilizzando lo stile definito per le intestazioni
+	 * @param infoColonne informazioni da assegnare alle colonne
 	 * @param nomiRighe nomi da assegnare alle righe, (colonna di sinistra) , utilizzando lo stile definito per le intestazioni
 	 */
-	public void appendSheetData(String[][] tabellaValori, String nomeSheet, ArrayList<String> intestazione, ArrayList<String> nomiColonne, ArrayList<String> nomiRighe)
+	public void appendSheetData(String[][] tabellaValori, String nomeSheet, ArrayList<String> intestazione, ArrayList<DTO_InformazioniColonna> infoColonne, ArrayList<String> nomiRighe)
 	{
 		if( _matriciValori == null || _matriciValori.length<= 0 )
 			_matriciValori = new String[maxNumberOfSheets][][];
@@ -110,7 +130,7 @@ public class KExcelWriter extends KMultiSheet_ExcelWriter implements KFileWriter
 		if(nomeSheet != null)
 			_sheetNames[sheetIndex] = nomeSheet;
 		_matriciValori[sheetIndex] = tabellaValori;
-		setNomiColonne(sheetIndex, nomiColonne);
+		setInformazioniColonne(sheetIndex, infoColonne);
 		setNomiRighe(sheetIndex, nomiRighe);
 		setIntestazione(sheetIndex, intestazione);
 		if(tabellaValori.length > MAX_BUFFER_SIZE)
@@ -126,7 +146,6 @@ public class KExcelWriter extends KMultiSheet_ExcelWriter implements KFileWriter
 		}
 	}	
 
-
 	// **************************************************************************** METODI PROTECTED **************************************************************************** \\
 
 	@Override
@@ -138,13 +157,13 @@ public class KExcelWriter extends KMultiSheet_ExcelWriter implements KFileWriter
 		{
 			Sheet sheet = _workBook.createSheet();
 			_workBook.setSheetName(i, _sheetNames[i]);
-			createSheet(i, sheet, _matriciValori[i], _arrayIntestazioni.get(i), _arrayNomiColonne.get(i), _arrayNomiRighe.get(i));
+			createSheet(i, sheet, _matriciValori[i], _arrayIntestazioni.get(i), _arrayColonne.get(i), _arrayNomiRighe.get(i));
 		}
 		return _workBook;
 	}
 
 	/** ereditare questo metodo se si vuole cambiare il modo in cui i dati vengono scritti sul file */
-	protected void createSheet(int sheetIndex, Sheet sheet, String[][] body, ArrayList<String> intestazione, ArrayList<String> nomi_colonne , ArrayList<String> nomi_righe )
+	protected void createSheet(int sheetIndex, Sheet sheet, String[][] body, ArrayList<String> intestazione, ArrayList<DTO_InformazioniColonna> info_colonne , ArrayList<String> nomi_righe )
 	{	
 		int numRighe = body.length +3 ;
 		if(intestazione != null)
@@ -165,7 +184,7 @@ public class KExcelWriter extends KMultiSheet_ExcelWriter implements KFileWriter
 			startColonna = 2;
 			scriviColonnaSinistra(sheet, sheetIndex,startRiga);
 		}
-		if(nomi_colonne != null && nomi_colonne.size() > 0)
+		if(info_colonne != null && info_colonne.size() > 0)
 		{
 			scriviIntestazioneColonne(sheet, sheetIndex, startColonna,startRiga);
 			++startRiga;
@@ -177,24 +196,47 @@ public class KExcelWriter extends KMultiSheet_ExcelWriter implements KFileWriter
 			for(int c = 0 ; c < body[r].length ; c++)
 			{
 				Cell cell = sheet.getRow(r+startRiga).createCell(c + startColonna);
-				cell.setCellStyle(_styleTesto);
+				switch (info_colonne.get(c).getTipoDato() )
+				{
+				case DESCRIZIONE:
+					cell.setCellStyle(_styleDatiDescrizione);
+					break;
+				case IMPORTO:
+					cell.setCellStyle(_styleDatiImporto);
+					break;
+				case CODICE:
+				default:
+					cell.setCellStyle(_styleDatiCodice);
+					break;
+				}//EO switch
 				cell.setCellValue( (body[r][c]));
 				if(c+startColonna > numeroColonne)
 					numeroColonne = c+startColonna;
 			}
 		}
 		//autosize su tutto
-		if(nomi_colonne != null && numeroColonne < nomi_colonne.size() +1 )
-			numeroColonne = nomi_colonne.size() +1;
+		autosizeColonne(numeroColonne, sheet, info_colonne, flagIntestazioniRighe);
+	}
+
+	protected void autosizeColonne(int numeroColonne, Sheet sheet,  ArrayList<DTO_InformazioniColonna> info_colonne, boolean flagIntestazioniRighe)
+	{
+		if(info_colonne != null && numeroColonne < info_colonne.size() +1 )
+			numeroColonne = info_colonne.size() +1;
 		for(int c=0; c <= numeroColonne; c++)
 		{
 			int width = 256;
 			if(c==0 && flagIntestazioniRighe == false )
 				width = 256;
 			else if(c==1)
-				width = maxLunghezzaIntestazione*256;
+				width = maxLunghezzaIntestazione<fixedColumnWidth ? fixedColumnWidth*256 : maxLunghezzaIntestazione*256;
 			else
-				width = fixedColumnWidth*256;
+			{
+				width = fixedColumnWidth;
+				//confronto con il titolo della colonna (se esiste)
+				if(info_colonne != null && c <= info_colonne.size() )			
+					width = width < (info_colonne.get(c-1).getNomeColonna().length() +2) ? (info_colonne.get(c-1).getNomeColonna().length() + 2) : width;
+					width = width*256;
+			}
 			sheet.setColumnWidth(c, width);
 		}
 	}
@@ -212,4 +254,40 @@ public class KExcelWriter extends KMultiSheet_ExcelWriter implements KFileWriter
 				maxLunghezzaIntestazione = _arrayIntestazioni.get(sheetIndex).get(r).length();
 		}
 	}
+
+	@Override
+	protected void initStili()
+	{
+		super.initStili();
+		// creo i font \\
+		Font fontDati = _workBook.createFont();
+		fontDati.setBoldweight(Font.BOLDWEIGHT_NORMAL);
+		fontDati.setFontHeightInPoints((short) 10);
+
+		_styleDatiCodice = _workBook.createCellStyle();
+		_styleDatiCodice.setAlignment(CellStyle.ALIGN_CENTER);
+		_styleDatiCodice.setBorderTop(CellStyle.BORDER_THIN);
+		_styleDatiCodice.setBorderRight(CellStyle.BORDER_THIN);
+		_styleDatiCodice.setBorderBottom(CellStyle.BORDER_THIN);
+		_styleDatiCodice.setBorderLeft(CellStyle.BORDER_THIN);
+		_styleDatiCodice.setFont(fontDati);
+
+		_styleDatiDescrizione = _workBook.createCellStyle();
+		_styleDatiDescrizione.setAlignment(CellStyle.ALIGN_LEFT);
+		_styleDatiDescrizione.setBorderTop(CellStyle.BORDER_THIN);
+		_styleDatiDescrizione.setBorderRight(CellStyle.BORDER_THIN);
+		_styleDatiDescrizione.setBorderBottom(CellStyle.BORDER_THIN);
+		_styleDatiDescrizione.setBorderLeft(CellStyle.BORDER_THIN);
+		_styleDatiDescrizione.setFont(fontDati);
+
+		_styleDatiImporto = _workBook.createCellStyle();
+		_styleDatiImporto.setAlignment(CellStyle.ALIGN_RIGHT);
+		_styleDatiImporto.setBorderTop(CellStyle.BORDER_THIN);
+		_styleDatiImporto.setBorderRight(CellStyle.BORDER_THIN);
+		_styleDatiImporto.setBorderBottom(CellStyle.BORDER_THIN);
+		_styleDatiImporto.setBorderLeft(CellStyle.BORDER_THIN);
+		_styleDatiImporto.setFont(fontDati);
+	}
+
+
 }//EO KExcelWriter

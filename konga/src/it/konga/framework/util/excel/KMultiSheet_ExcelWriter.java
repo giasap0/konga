@@ -6,10 +6,13 @@ import java.util.ArrayList;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import it.konga.framework.interfaces.KFileWriter;
+import it.konga.framework.kObjects.DTO_InformazioniColonna;
 
 /**
  * Questo oggetto permette di scrivere su un outputStream un file excel composto da più sheet<br>
@@ -28,9 +31,9 @@ public class KMultiSheet_ExcelWriter implements KFileWriter {
 	/** numero di righe del file */
 	protected int bufferSize = 100;
 	/** una lista che contiene le liste dei nomi delle colonne per ogni sheet. Alcune o tutte possono essere null*/
-	protected ArrayList< ArrayList<String>> _arrayNomiColonne;
+	protected ArrayList< ArrayList<DTO_InformazioniColonna> > _arrayColonne;
 	/** una lista che contiene le liste dei nomi delle righe per ogni sheet. Alcune o tutte possono essere null*/
-	protected ArrayList<ArrayList<String>> _arrayNomiRighe;
+	protected ArrayList<ArrayList<String> > _arrayNomiRighe;
 	/** array di matrici contenenti i dati di ogni sheet */
 	protected String[][][] _matriciValori;
 	protected SXSSFWorkbook _workBook;
@@ -51,16 +54,16 @@ public class KMultiSheet_ExcelWriter implements KFileWriter {
 		if(maxNumberOfSheets<=0)
 			return;
 		this.maxNumberOfSheets = maxNumberOfSheets;
-		_arrayNomiColonne = new ArrayList<ArrayList<String>>(maxNumberOfSheets);
+		_arrayColonne = new ArrayList<ArrayList<DTO_InformazioniColonna>>(maxNumberOfSheets);
 		_arrayNomiRighe = new ArrayList<ArrayList<String>>(maxNumberOfSheets);
 		for(int i=0; i < maxNumberOfSheets; i++)
 		{
-			_arrayNomiColonne.add(null);
+			_arrayColonne.add(null);
 			_arrayNomiRighe.add(null);
 		}
 	}
 	// **************************************************************************** METODI PUBLICI **************************************************************************** \\
-
+	
 	/**
 	 * aggiungi informazioni sul prossimo sheet
 	 * @param tabellaValori tabella dei valori da scrivere sul file
@@ -72,9 +75,9 @@ public class KMultiSheet_ExcelWriter implements KFileWriter {
 	/**
 	 * aggiungi informazioni sul prossimo sheet
 	 * @param tabellaValori tabella dei valori da scrivere sul file
-	 * @param nomiColonne nomi da assegnare alle colonne, utilizzando lo stile definito per le intestazioni
+	 * @param informazioniColonne nomi da assegnare alle colonne, utilizzando lo stile definito per le intestazioni
 	 */
-	public void appendSheetData(String[][] tabellaValori, ArrayList<String> nomiColonne)
+	public void appendSheetData(String[][] tabellaValori, ArrayList<DTO_InformazioniColonna> informazioniColonne)
 	{
 		if( _matriciValori == null || _matriciValori.length<= 0 )
 			_matriciValori = new String[maxNumberOfSheets][][];
@@ -82,19 +85,19 @@ public class KMultiSheet_ExcelWriter implements KFileWriter {
 			return;
 		int sheetIndex = currentNumberOfSheets++;
 		_matriciValori[sheetIndex] = tabellaValori;
-		setNomiColonne(sheetIndex, nomiColonne);
+		setInformazioniColonne(sheetIndex, informazioniColonne);
 		if(tabellaValori.length > MAX_BUFFER_SIZE)
 			throw new IndexOutOfBoundsException("MultiSheet_ExcelWriter::appendSheetData() - tabella valori troppo ampia. Numero righe = "+tabellaValori.length + ". Massimo supportato = "+MAX_BUFFER_SIZE);
 		if(bufferSize<tabellaValori.length+2)
 			bufferSize = tabellaValori.length+2;//2 sono la prima riga vuota e la riga di intestazione	
 	}
-
-	/** fai un set dei nomi da assegnare alle colonne, utilizzando lo stile definito per le intestazioni */
-	public void setNomiColonne(int sheetIndex ,ArrayList<String> nomiColonne)
+	
+	/** fai un set delle informazioni da assegnare alle colonne */
+	public void setInformazioniColonne(int sheetIndex ,ArrayList<DTO_InformazioniColonna> infoColonne)
 	{
 		if(sheetIndex<0 || sheetIndex>= currentNumberOfSheets)
 			throw new IndexOutOfBoundsException("MultiSheet_ExcelWriter::setNomiColonne() - indice non valido. indx == "+sheetIndex+" , numero sheets = "+currentNumberOfSheets);
-		_arrayNomiColonne.set(sheetIndex, nomiColonne);
+		_arrayColonne.set(sheetIndex, infoColonne);
 	}
 	/** fai un set dei nomi da assegnare alle righe, (colonna di sinistra) , utilizzando lo stile definito per le intestazioni */
 	public void setNomiRighe(int sheetIndex, ArrayList<String> nomiRighe)
@@ -125,7 +128,7 @@ public class KMultiSheet_ExcelWriter implements KFileWriter {
 		_workBook = null;
 
 	}
-
+	
 	// **************************************************************************** METODI PROTECTED **************************************************************************** \\
 
 	protected SXSSFWorkbook creaWorkBook()
@@ -133,12 +136,12 @@ public class KMultiSheet_ExcelWriter implements KFileWriter {
 		_workBook = new SXSSFWorkbook(bufferSize);
 		initStili();
 		for(int i=0; i < currentNumberOfSheets; i++)
-			createSheet(i, _workBook.createSheet(), _matriciValori[i], _arrayNomiRighe.get(i), _arrayNomiColonne.get(i));
+			createSheet(i, _workBook.createSheet(), _matriciValori[i], _arrayNomiRighe.get(i), _arrayColonne.get(i));
 		return _workBook;
 	}
-
+	
 	/** ereditare questo metodo se si vuole cambiare il modo in cui i dati vengono scritti sul file */
-	protected void createSheet(int sheetIndex, Sheet sheet, String[][] body, ArrayList<String> nomi_righe, ArrayList<String> nomi_colonne)
+	protected void createSheet(int sheetIndex, Sheet sheet, String[][] body, ArrayList<String> nomi_righe, ArrayList<DTO_InformazioniColonna> info_colonne)
 	{	
 		creaRighe(sheet, body.length +3);
 		int startColonna = 1;
@@ -151,7 +154,7 @@ public class KMultiSheet_ExcelWriter implements KFileWriter {
 			startColonna = 2;
 			scriviColonnaSinistra(sheet, sheetIndex,startRiga);
 		}
-		if(nomi_colonne != null && nomi_colonne.size() > 0)
+		if(info_colonne != null && info_colonne.size() > 0)
 		{
 			scriviIntestazioneColonne(sheet, sheetIndex, startColonna,startRiga);
 			++startRiga;
@@ -170,8 +173,8 @@ public class KMultiSheet_ExcelWriter implements KFileWriter {
 			}
 		}
 		//autosize su tutto
-		if(nomi_colonne != null && numeroColonne < nomi_colonne.size() +1 )
-			numeroColonne = nomi_colonne.size() +1;
+		if(info_colonne != null && numeroColonne < info_colonne.size() +1 )
+			numeroColonne = info_colonne.size() +1;
 		for(int c=0; c <= numeroColonne; c++)
 		{
 			if(c==0 && flagIntestazioniRighe == false)
@@ -194,11 +197,11 @@ public class KMultiSheet_ExcelWriter implements KFileWriter {
 	}
 	protected void scriviIntestazioneColonne(Sheet sheet, int sheetIndex, int startColonna, int startRiga) 
 	{		
-		for(int c=0; c < _arrayNomiColonne.get(sheetIndex).size(); c++)
+		for(int c=0; c < _arrayColonne.get(sheetIndex).size(); c++)
 		{
 			Cell cell = sheet.getRow(startRiga).createCell(c + startColonna);
 			cell.setCellStyle(_styleIntestazioni);
-			cell.setCellValue( _arrayNomiColonne.get(sheetIndex).get(c));
+			cell.setCellValue( _arrayColonne.get(sheetIndex).get(c).getNomeColonna());
 		}
 	}
 
@@ -210,7 +213,7 @@ public class KMultiSheet_ExcelWriter implements KFileWriter {
 		}
 	}
 
-	/** ereditare questo metodo per modificare gli stili utilizzati */
+	/** ereditare questo metodo per modificare gli stili utilizzati  */
 	protected void initStili()
 	{
 		Font fontGrassetto = _workBook.createFont();
@@ -222,15 +225,19 @@ public class KMultiSheet_ExcelWriter implements KFileWriter {
 		fontTesto.setFontHeightInPoints((short) 10);
 
 		_styleIntestazioni = _workBook.createCellStyle();
-		_styleIntestazioni.setFont(fontGrassetto);
-		_styleIntestazioni.setBorderTop(CellStyle.BORDER_MEDIUM);
-		_styleIntestazioni.setBorderRight(CellStyle.BORDER_MEDIUM);
-		_styleIntestazioni.setBorderBottom(CellStyle.BORDER_MEDIUM);
-		_styleIntestazioni.setBorderLeft(CellStyle.BORDER_MEDIUM);
 		_styleIntestazioni.setAlignment(CellStyle.ALIGN_CENTER);
 		_styleIntestazioni.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		_styleIntestazioni.setBorderTop(CellStyle.BORDER_THIN);
+		_styleIntestazioni.setBorderRight(CellStyle.BORDER_THIN);
+		_styleIntestazioni.setBorderBottom(CellStyle.BORDER_THIN);
+		_styleIntestazioni.setBorderLeft(CellStyle.BORDER_THIN);
+		_styleIntestazioni.setFillPattern(XSSFCellStyle.FINE_DOTS);
+		_styleIntestazioni.setFillForegroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.index);
+		_styleIntestazioni.setFont(fontGrassetto);
 
 		_styleTesto = _workBook.createCellStyle();
+		_styleTesto.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
 		_styleTesto.setFont(fontTesto);
 	}
+	
 }

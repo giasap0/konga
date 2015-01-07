@@ -10,7 +10,7 @@ import it.konga.framework.flusso.KAbstractAction;
 @Results({
 	@Result(name="k_error", type="tiles", location="konga.tiles.error")
 })
-public class KBaseAction_NoCheckAccess extends KAbstractAction
+public abstract class KBaseAction_NoCheckAccess extends KAbstractAction
 {
 	private static final long serialVersionUID = -430448344718798544L;
 

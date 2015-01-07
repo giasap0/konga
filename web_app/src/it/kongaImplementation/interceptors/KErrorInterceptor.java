@@ -1,5 +1,7 @@
 package it.kongaImplementation.interceptors;
 
+import it.kongaImplementation.flusso.IStandardResults;
+
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.Interceptor;
 
@@ -24,7 +26,7 @@ public class KErrorInterceptor implements Interceptor
 			ret = invocation.invoke();
 		} catch (Exception e) {
 			System.out.println("l'interceptor ha beccato un'eccezione");
-			ret = "k_error";
+			ret = IStandardResults.RESULT_ERROR;
 		}
 
 		return ret;

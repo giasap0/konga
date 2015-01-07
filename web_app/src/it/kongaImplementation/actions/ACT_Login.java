@@ -2,6 +2,7 @@ package it.kongaImplementation.actions;
 
 import it.kongaImplementation.dto.KUser;
 import it.kongaImplementation.enumerations.KAccessLevel;
+import it.kongaImplementation.flusso.KBaseAction;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;

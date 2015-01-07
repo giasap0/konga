@@ -10,9 +10,16 @@
       </result-types>
       <interceptors>   
             <interceptor name="errorInterceptor" class="it.kongaImplementation.interceptors.KErrorInterceptor" />
-            <interceptor-stack name="kongaStack">
+            <interceptor name="accessInterceptor" class="it.kongaImplementation.interceptors.KInterceptor_CheckAutorization" />
+            
+            <interceptor-stack name="kongaStackNoCheckAccess">
                 <interceptor-ref name="errorInterceptor"/>
                 <interceptor-ref name="defaultStack" />
+            </interceptor-stack>
+            
+            <interceptor-stack name="kongaStack">
+                <interceptor-ref name="kongaStackNoCheckSession"/>
+                <interceptor-ref name="accessInterceptor" />
             </interceptor-stack>
         </interceptors>
    </package>

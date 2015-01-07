@@ -10,7 +10,7 @@ public class KAbstract_User extends KAbstract_Dto
 
 	public static String getSessionID()
 	{
-		return "user";
+		return "k_user_session";
 	}
 	
 }//EO KAbstract_User

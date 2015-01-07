@@ -9,8 +9,8 @@ public enum KAccessLevel implements IAccessLevel
 	ADMIN("admin",2)
 	;
 
-	private String description;
-	private int id;
+	private final String description;
+	private final int id;
 	
 	KAccessLevel(String descriptio, int id)
 	{
@@ -19,23 +19,17 @@ public enum KAccessLevel implements IAccessLevel
 	}
 	
 	@Override
-	public String getDescription() {
-		return description;
-	}
-
+	public String getDescription() 				{ return description; }
 	@Override
-	public int getId() {
-		return id;
-	}
-
+	public int getId() 							{ return id; }
+	@Override
+	public boolean isValid()					{ return id != -1; }
+	
 	@Override
 	public boolean includes(IAccessLevel other) {
 		if(id>= other.getId())
 			return true;
 		return false;
 	}
-
-	@Override
-	public boolean isValid()					{ return id != -1; }
 
 }

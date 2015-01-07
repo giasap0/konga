@@ -29,7 +29,7 @@ import org.apache.struts2.convention.annotation.Results;
 											        "contentDisposition", "attachment;filename=${fileName}"}
 			)
 	})
-public abstract class KACT_FileDownload extends KAbstractAction
+public abstract class KAbstractACT_FileDownload extends KAbstractAction
 {
 	private static final long serialVersionUID = -174852288845066L;
 	
@@ -39,18 +39,18 @@ public abstract class KACT_FileDownload extends KAbstractAction
 	protected MimeType _mimeType;
 	
 	/**  ereditare questo metodo e scrivere un body che assegna una classe concreta e valorizzata al campo _fileWriter */
-	protected abstract void initFileWriter();
+	protected abstract KFileWriter initFileWriter();
 	/** ereditare questo metodo per assegnare il campo protected _mimeType */
-	protected abstract void initMimeType();
+	protected abstract MimeType initMimeType();
 	/** ereditare questo metodo per assegnare il nome del file. Accedere attraverso il setter setFileNmae(String) */
-	protected abstract void initFileName();
+	protected abstract String initFileName();
 
 	@Override
 	public String execute() throws Exception
 	{   
-		initFileWriter();
-		initMimeType();
-		initFileName();
+		_fileWriter = initFileWriter();
+		_mimeType = initMimeType();
+		fileName = initFileName();
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		_fileWriter.writeFile(output);
@@ -65,20 +65,11 @@ public abstract class KACT_FileDownload extends KAbstractAction
         return "success"; 
 	}
 
+	public String getFileName() 						{ return fileName; }
+	public void setFileName(String fileName) 			{ this.fileName = fileName; }
+	
 	//questo serve a struts per scrivere sulla response
-	public InputStream getFile() {
-		return file;
-	}
-	//questo serve a struts per scrivere sulla response
-	public void setFile(InputStream file) {
-		this.file = file;
-	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+	public InputStream getFile() 						{ return file; }
+	public void setFile(InputStream file) 				{ this.file = file; }	
+	
 }//EO KACT_FileDownload

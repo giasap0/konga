@@ -26,12 +26,14 @@ public class KInterceptorCheckAccess  implements Interceptor
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception
 	{
-		System.out.println("validazione accesso");
 		Map<String, Object> session = ActionContext.getContext().getSession();
 		KAbstract_User user = (KAbstract_User) (session.get( KAbstract_User.getSessionID() ));
 
 		if (user == null)
+		{
+			System.out.println("validazione accesso fallita - forward pagina accesso non consentito");
 			return IStandardResults.RESULT_FORBIDDEN;
+		}
 		return invocation.invoke();
 	}
 

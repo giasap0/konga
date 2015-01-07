@@ -33,8 +33,8 @@ public abstract class KAbstractAction extends ActionSupport implements ServletRe
 	    this.servletRequest = servletRequest;
 	  }
 	  
-	  public Map<String, Object> getSession()						{ return ActionContext.getContext().getSession(); }
-	  public HttpServletRequest getRequest()						{ return servletRequest;}
-	  public HttpServletResponse getResponse()						{ return servletResponse;}
+	  protected Map<String, Object> getSession()			{ return ActionContext.getContext().getSession(); }
+	  protected HttpServletRequest getRequest()				{ return servletRequest;}
+	  protected HttpServletResponse getResponse()			{ return servletResponse;}
 	  
 }//EO KAbstractAction

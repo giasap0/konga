@@ -9,8 +9,8 @@
          <result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" />
       </result-types>
       <interceptors>   
-            <interceptor name="errorInterceptor" class="it.kongaImplementation.interceptors.KErrorInterceptor" />
-            <interceptor name="accessInterceptor" class="it.kongaImplementation.interceptors.KInterceptor_CheckAutorization" />
+            <interceptor name="errorInterceptor"  class="it.kongaImplementation.interceptors.KErrorInterceptor" />
+            <interceptor name="accessInterceptor" class="it.kongaImplementation.interceptors.KInterceptorCheckAccess" /> 
             
             <interceptor-stack name="kongaStackNoCheckAccess">
                 <interceptor-ref name="errorInterceptor"/>
@@ -18,8 +18,9 @@
             </interceptor-stack>
             
             <interceptor-stack name="kongaStack">
-                <interceptor-ref name="kongaStackNoCheckSession"/>
-                <interceptor-ref name="accessInterceptor" />
+                <interceptor-ref name="errorInterceptor"/>
+                <interceptor-ref name="defaultStack" />   
+                <interceptor-ref name="accessInterceptor" />            
             </interceptor-stack>
         </interceptors>
    </package>

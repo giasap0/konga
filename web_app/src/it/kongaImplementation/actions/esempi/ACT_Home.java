@@ -1,6 +1,6 @@
 package it.kongaImplementation.actions.esempi;
 
-import it.konga.framework.flusso.KBaseAction;
+import it.konga.framework.flusso.KAbstractAction;
 import it.kongaImplementation.dto.KUser;
 
 import org.apache.struts2.convention.annotation.Action;
@@ -10,7 +10,7 @@ import org.apache.struts2.convention.annotation.Results;
 @Results({
 	@Result(name="go_home", type="tiles", location="konga.tiles.home")
 })
-public class ACT_Home extends KBaseAction
+public class ACT_Home extends KAbstractAction
 {
 	private static final long serialVersionUID = -7251065121878532439L;
 

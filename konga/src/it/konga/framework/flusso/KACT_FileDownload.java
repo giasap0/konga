@@ -29,7 +29,7 @@ import org.apache.struts2.convention.annotation.Results;
 											        "contentDisposition", "attachment;filename=${fileName}"}
 			)
 	})
-public abstract class KACT_FileDownload extends KBaseAction
+public abstract class KACT_FileDownload extends KAbstractAction
 {
 	private static final long serialVersionUID = -174852288845066L;
 	

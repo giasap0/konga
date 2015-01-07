@@ -1,6 +1,5 @@
 package it.kongaImplementation.actions;
 
-import it.konga.framework.flusso.KBaseAction;
 import it.kongaImplementation.dto.KUser;
 import it.kongaImplementation.enumerations.KAccessLevel;
 
@@ -27,7 +26,8 @@ public class ACT_Login extends KBaseAction
 		KUser user = new KUser();
 		user.setAccessLevel(KAccessLevel.NORMALE);
 		getSession().put(KUser.getSessionID(), user);
-		return "go_login";
+		throw new Exception("ciao ciao eccezione");
+		//return "go_login";
 	}
 	
 }//EO ACT_Login

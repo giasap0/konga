@@ -39,7 +39,7 @@ public abstract class KAbstractAction extends ActionSupport implements ServletRe
 	}
 
 	protected HttpServletResponse getResponse()			{ return servletResponse;}
-	protected Map<String, Object> getSession()			{ return session; }
 	protected Map<String,Object> getRequest()			{ return request;}
+	protected Map<String, Object> getSession()			{ return session; }
 	
 }//EO KAbstractAction

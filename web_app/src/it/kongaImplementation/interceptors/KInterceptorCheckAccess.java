@@ -16,11 +16,13 @@ public class KInterceptorCheckAccess  implements Interceptor
 
 	@Override
 	public void destroy() {
+		clearSessionUser();
 	}
 
 	@Override
 	public void init() {
 		System.out.println("init check access interceptor");
+		clearSessionUser();
 	}
 
 	@Override
@@ -35,6 +37,15 @@ public class KInterceptorCheckAccess  implements Interceptor
 			return IStandardResults.RESULT_FORBIDDEN;
 		}
 		return invocation.invoke();
+	}
+	
+	private void clearSessionUser()
+	{
+		ActionContext cntx = ActionContext.getContext();
+		if (cntx == null) return;
+		Map<String, Object> session = cntx.getSession();
+		if(session == null) return;
+		session.remove(KAbstract_User.getSessionID());
 	}
 
 }//EO KInterceptor_CheckAutorization

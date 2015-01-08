@@ -18,8 +18,8 @@ public class ACT_Home extends KBaseAction
 	public String home() throws Exception
 	{
 		KUser utente = getUser();
-		//in realtà questo non avviene mai perchè c'è l'ionterceptor che si assicura che l'utente abbia eseguito il login
-		String isUtente = utente == null ? "no utente" : utente.getAccessLevel().getDescription();	
+		//in realtà questo non avviene mai perchè c'è l'interceptor che si assicura che l'utente abbia eseguito il login
+		String isUtente = utente == null ? "no utente" : ( utente.getAccessLevel().getDescription() + " - " + utente.getUniqueId() );	
 		System.out.println( isUtente );
 		return "go_home";
 	}

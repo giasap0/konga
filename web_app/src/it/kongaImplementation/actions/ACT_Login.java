@@ -23,7 +23,6 @@ public class ACT_Login extends KBaseAction_NoCheckAccess
 		//in teoria qui arrivano dati da un form 
 		
 		//recuperare in base ai dati in input l'utente dal database
-		
 		KUser user = new KUser();
 		user.setAccessLevel(KAccessLevel.NORMALE);
 		getSession().put(KUser.getSessionID(), user);

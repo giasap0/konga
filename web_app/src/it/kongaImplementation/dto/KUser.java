@@ -9,6 +9,8 @@ public class KUser extends KAbstract_User
 	
 	public KUser()
 	{
+		super();
+		System.out.println("costruttore KUser - id univoco == " + getUniqueId());
 		this._accessLevel = KAccessLevel.INVALID;
 	}
 	

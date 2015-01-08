@@ -26,6 +26,7 @@ public class KErrorInterceptor implements Interceptor
 			ret = invocation.invoke();
 		} catch (Exception e) {
 			System.out.println("l'interceptor ha beccato un'eccezione");
+			//Map<String, Object> request = invocation.getInvocationContext().getParameters();
 			ret = IStandardResults.RESULT_ERROR;
 		}
 

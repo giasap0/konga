@@ -1,4 +1,4 @@
-package it.konga.framework.kObjects;
+package it.konga.framework.kObjects.excel;
 
 /**
  * Indica la tipologia di dato inseribile in ogni cella excel - utile per una formattazione selettiva

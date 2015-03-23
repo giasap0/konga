@@ -1,4 +1,6 @@
-package it.konga.framework.kObjects;
+package it.konga.framework.kObjects.excel;
+
+import it.konga.framework.kObjects.KAbstract_Dto;
 
 /** contiene informazioni di testata e di formattazione delle celle rispettive ad una colonna, ereditare da questa classe se si vuole personalizzare */
 public class DTO_InformazioniColonna extends KAbstract_Dto
